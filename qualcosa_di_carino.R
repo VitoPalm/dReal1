@@ -21,14 +21,42 @@ summary(twist)
 
 
 # 1.3.
-hist(y_IQ)
-hist(x1_ISO)
-hist(x2_T)
-hist(x3_MP)
-hist(x4_CF)
-hist(x5_F)
-hist(x6_GSI)
-hist(x7_UA)
+lista_variabili <- list(
+  y_IQ = y_IQ, x1_ISO = x1_ISO, x2_T = x2_T, x3_MP = x3_MP, 
+  x4_CF = x4_CF, x5_F = x5_F, x6_GSI = x6_GSI, x7_UA = x7_UA
+)
+
+for(nome in names(lista_variabili)) {
+    dati = lista_variabili[[nome]]
+
+    hist(dati, main='', xlab=nome)
+}
+
+dev.new()
+par(mfrow = c(4, 2))
+
+for(nome in names(lista_variabili)) {
+  
+  dati <- lista_variabili[[nome]]
+  
+  shapiro_risultato <- shapiro.test(dati)
+  p_val <- round(shapiro_risultato$p.value, 4)
+  
+  qqnorm(dati, main = nome)
+  qqline(dati, col = "red")
+  
+  mtext(text = paste("p-val:", p_val), 
+        side = 1, 
+        line = -1.2, 
+        adj = 0.95,
+        col = ifelse(p_val < 0.05, "red", "darkgreen"), 
+        cex = 0.85, 
+        font = 2) 
+}
+
+par(mfrow = c(1, 1))
+
+
 
 
 # 1.4.
@@ -43,25 +71,44 @@ boxplot(x1_ISO, x2_T, x3_MP, x4_CF, x5_F, x6_GSI, x7_UA,
 
 
 # 1.5.
-plot(x1_ISO, y_IQ)
-plot(x2_T, y_IQ)
-plot(x3_MP, y_IQ)
-plot(x4_CF, y_IQ)
-plot(x5_F, y_IQ)
-plot(x6_GSI, y_IQ)
-plot(x7_UA, y_IQ)
+for (name in names(lista_variabili)) {
+    if (name != "y_IQ") {
+        data = lista_variabili[[name]]
+        
+        plot(data, y_IQ, 
+            main = '',
+            xlab = name, 
+            ylab = "y_IQ",
+            pch = 19,
+            col = "blue")
+
+        abline(lm(y_IQ ~ data), col = "red", lwd = 2)
+        seq_x <- seq(min(data, na.rm = TRUE), max(data, na.rm = TRUE), length.out = 100)
+        modello_quadratico <- lm(y_IQ ~ poly(data, 2, raw = TRUE))
+        predizioni_y <- predict(modello_quadratico, newdata = data.frame(data = seq_x))
+        lines(seq_x, predizioni_y, col = "darkblue", lwd = 3, lty = 3)
+    }
+}
 
 independent_twist = twist
 independent_twist$y_IQ = NULL
 plot(independent_twist)
 
-plot(x7_UA, x5_F)
-plot(x4_CF, x5_F)
-plot(x5_F, x3_MP)
-plot(x1_ISO, x2_T)
 
-# plot(twist)
+pannello_lineare_e_quadratico <- function(x, y, ...) {
+  points(x, y, ...)
+  abline(lm(y ~ x), col = "blue", lwd = 1.5)
+  seq_x <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), length.out = 100)
+  modello_quadratico <- lm(y ~ poly(x, 2, raw = TRUE))
+  predizioni_y <- predict(modello_quadratico, newdata = data.frame(x = seq_x))
+  lines(seq_x, predizioni_y, col = "red", lwd = 2, lty = "dashed")
+}
 
+pairs(twist, 
+      panel = pannello_lineare_e_quadratico, 
+      pch = 1, 
+      col = "black", 
+      cex = 0.7)
 
 # 1.6.
 cv = cov(twist)
@@ -80,5 +127,6 @@ plot(x5_F, x7_UA)
 
 
 # 99.
+
 reg = lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA, data = twist); summary(reg)
 fff = step(y_I, lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA + I(x1_ISO^2) + I(x2_T^2) + I(x3_MP^2) + I(x4_CF^2) + I(x5_F^2) + I(x6_GSI^2) + I(x7_UA^2) + (x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA)^2, data = twist), direction = "both", trace = 1, k = log(n)); summary(fff)

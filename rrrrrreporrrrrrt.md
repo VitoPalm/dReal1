@@ -25,10 +25,11 @@ di cui sono definite varie caratteristiche
 - indici di tendenza centrale: media, mediana (boh mostra i dati)
 - indici di dispersione: varianza (e il cugino), escursione campionaria (range)
 
-## 1.3. Istogrammi
+## 1.3. Istogrammi e Q-Q plot
 - Explain how you choose number of thinghies 🪣
 - Denote clear noticeable thinghies
 - Shits and giggles
+- since we don't know if they're "normal" (what does that mean anyway?): Q-Q plots
 
 ## 1.4. Boxplot (Whiskers Diagram)
 - Consider doing fancy shit for labels

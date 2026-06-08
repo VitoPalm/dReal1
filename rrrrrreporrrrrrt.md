@@ -9,6 +9,7 @@ Per prima cosa è stato importato il dataset in esame (`read.csv()`).
 
 # 1. Analisi Statistica Descrittiva
 - Introductory thingy to the theoretical concept
+
 La popolazione in analisi è costituita da 100 (`n = nrow(ds)`) campioni
 di cui sono definite varie caratteristiche
 
@@ -41,6 +42,7 @@ di cui sono definite varie caratteristiche
 - independent twist
 - honorable mentions
 - ipotesi su why forme all throughout
+- poly regression for all graphs
 
 
 ## 1.6. (covariances too) CORRELATION = CAUSATION SHIT NEEDS BETTER NAME (CONTROVERSIAL)
@@ -56,6 +58,11 @@ di cui sono definite varie caratteristiche
 
 
 # 2. Regression
+- lm (so fitting)
+- residuals
+- test di HP 
+    - globali
+    - individuali
 
 
 

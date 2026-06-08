@@ -1,0 +1,40 @@
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-19.8304  -4.8654   0.9343   4.7614  20.2500 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 141.1581     1.5458  91.320  < 2e-16 ***
+x1_ISO       -9.8775     0.7902 -12.500  < 2e-16 ***
+x2_T         -9.2344     0.8345 -11.066  < 2e-16 ***
+x3_MP         5.9568     0.8021   7.426 5.26e-11 ***
+x6_GSI       -8.1953     0.8019 -10.220  < 2e-16 ***
+I(x2_T^2)    -3.6453     0.9532  -3.824 0.000237 ***
+I(x7_UA^2)   -4.0947     0.8811  -4.647 1.11e-05 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 7.687 on 93 degrees of freedom
+Multiple R-squared:  0.8666,	Adjusted R-squared:  0.858 
+F-statistic: 100.7 on 6 and 93 DF,  p-value: < 2.2e-16
+
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-19.8304  -4.8654   0.9343   4.7614  20.2500 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 141.1581     1.5458  91.320  < 2e-16 ***
+x1_ISO       -9.8775     0.7902 -12.500  < 2e-16 ***
+x6_GSI       -8.1953     0.8019 -10.220  < 2e-16 ***
+x2_T         -9.2344     0.8345 -11.066  < 2e-16 ***
+x3_MP         5.9568     0.8021   7.426 5.26e-11 ***
+I(x7_UA^2)   -4.0947     0.8811  -4.647 1.11e-05 ***
+I(x2_T^2)    -3.6453     0.9532  -3.824 0.000237 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 7.687 on 93 degrees of freedom
+Multiple R-squared:  0.8666,	Adjusted R-squared:  0.858 
+F-statistic: 100.7 on 6 and 93 DF,  p-value: < 2.2e-16

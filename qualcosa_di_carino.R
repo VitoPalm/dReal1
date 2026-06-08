@@ -96,12 +96,12 @@ plot(independent_twist)
 
 
 pannello_lineare_e_quadratico <- function(x, y, ...) {
-  points(x, y, ...)
-  abline(lm(y ~ x), col = "blue", lwd = 1.5)
-  seq_x <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), length.out = 100)
-  modello_quadratico <- lm(y ~ poly(x, 2, raw = TRUE))
-  predizioni_y <- predict(modello_quadratico, newdata = data.frame(x = seq_x))
-  lines(seq_x, predizioni_y, col = "red", lwd = 2, lty = "dashed")
+    points(x, y, ...)
+    abline(lm(y ~ x), col = "blue", lwd = 1.5)
+    seq_x <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), length.out = 100)
+    modello_quadratico <- lm(y ~ poly(x, 2, raw = TRUE))
+    predizioni_y <- predict(modello_quadratico, newdata = data.frame(x = seq_x))
+    lines(seq_x, predizioni_y, col = "red", lwd = 2, lty = "dashed")
 }
 
 pairs(twist, 
@@ -126,7 +126,20 @@ plot(x5_F, x7_UA)
 
 
 
+
+# 2.
+
+fit1 = lm()
+residuals(fit1)
+confint(fit1)
+
+
+
+
+
+
+
 # 99.
 
 reg = lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA, data = twist); summary(reg)
-fff = step(y_I, lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA + I(x1_ISO^2) + I(x2_T^2) + I(x3_MP^2) + I(x4_CF^2) + I(x5_F^2) + I(x6_GSI^2) + I(x7_UA^2) + (x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA)^2, data = twist), direction = "both", trace = 1, k = log(n)); summary(fff)
+fff = step(lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA + I(x1_ISO^2) + I(x2_T^2) + I(x3_MP^2) + I(x4_CF^2) + I(x5_F^2) + I(x6_GSI^2) + I(x7_UA^2) + (x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA)^2, data = twist), direction = "both", trace = 1, k = log(n)); summary(fff)

@@ -127,11 +127,31 @@ plot(x5_F, x7_UA)
 
 
 
-# 2.
+# 2.1.
 
-fit1 = lm()
+fit0 = lm(y_IQ ~ ., data=twist); summary(fit0)                                                  # R²=0.8408; x4_CF, x5_F**, x7_UA
+fit1 = lm(y_IQ ~ .-x7_UA, data=twist); summary(fit1)                                            # R²=0.8408; -x7_UA
+fit2 = lm(y_IQ ~ .-x7_UA-x4_CF, data=twist); summary(fit2)                                      # R²=0.8371; -x4_CF
+                
+fit00 = lm(y_IQ ~ .^2, data=twist); summary(fit00)                                              # R²=0.859; x4_CF, x5_F.,x7_USA, .^2-{x3_MP:x4_CF.} 
+fit01 = lm(y_IQ ~ .-x7_UA-x4_CF+x3_MP:x4_CF, data=twist); summary(fit01)                        # R²=0.842; -x4_CF -x7_UA -.^2-{x3_MP:x4_CF}
+                
+                
+fit000 = lm(y_IQ ~ .^2+I(x7_UA^2), data=twist); summary(fit000)                                 # R²=0.8672; x4_CF., x5_F, x7_UA, x7_UA^2*, .^2 
+fit001 = lm(y_IQ ~ .+I(x7_UA^2)-x5_F-x7_UA, data=twist); summary(fit001)                        # R²=0.8488; x4_CF, x7_UA^2***; -x5_F -x7_UA -.^2
+fit002 = lm(y_IQ ~ .+I(x7_UA^2)-x4_CF-x5_F-x7_UA, data=twist); summary(fit002)                  # R²=0.8456; -x4_CF
+fit003 = lm(y_IQ ~ .+I(x7_UA^2)-x4_CF-x7_UA, data=twist); summary(fit003)                       # R²=0.8462; x7_UA^2*, x5_F; +x5_F
+                
+fit0000 = lm(y_IQ ~ .^2+I(x2_T^2)+I(x7_UA^2), data=twist); summary(fit0000)                     # R²=0.8899; x4_CF., x5_F, x7_UA, x7_UA^2*, .^2
+fit0001 = lm(y_IQ ~ .+I(x2_T^2)+I(x7_UA^2)-x5_F-x7_UA, data=twist); summary(fit0001)            # R²=0.869; x4_CF, x7_UA^2***; -x5_F -x7_UA -.^2
+fit0002 = lm(y_IQ ~ .+I(x2_T^2)+I(x7_UA^2)-x4_CF-x5_F-x7_UA, data=twist); summary(fit0002)      # R²=0.8666; -x4_CF
+fit0003 = lm(y_IQ ~ .+I(x2_T^2)+I(x7_UA^2)-x4_CF-x7_UA, data=twist); summary(fit0003)           # R²=0.8667; x7_UA^2*, x5_F; +x5_F
+
+confint(fit2)
+
 residuals(fit1)
-confint(fit1)
+
+
 
 
 

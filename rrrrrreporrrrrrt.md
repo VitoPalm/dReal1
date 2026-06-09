@@ -65,7 +65,11 @@ di cui sono definite varie caratteristiche
     - individuali
 
 
+# 2.1. Ricerca di un modello che minimizzi R²
 
+
+Direttamente sul fit che scegliamo
+Determinazione degli intervalli di confidenza sui parametri trovati: al 95% ogni parametro è tra minimo e massimo dell'intervallo
 
 
 

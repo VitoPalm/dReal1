@@ -72,6 +72,16 @@ Direttamente sul fit che scegliamo
 Determinazione degli intervalli di confidenza sui parametri trovati: al 95% ogni parametro è tra minimo e massimo dell'intervallo
 
 
+# 
+
+In maniera occhiometrica, il più carino per ogni categoria diagnostica
+- Residuals vs Fitted -> fit002 (Runner up: fit0002)
+- Q-Q Plots: fit0002 (Runner up: fit0001)
+- Scale-Location: fit1 (Runner up: fit01)
+- Cook's Distance: fit001 (Runner up: fit1)
+
+
+
 
 
 

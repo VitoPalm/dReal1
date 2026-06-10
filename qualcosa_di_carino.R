@@ -147,15 +147,67 @@ fit0001 = lm(y_IQ ~ .+I(x2_T^2)+I(x7_UA^2)-x5_F-x7_UA, data=twist); summary(fit0
 fit0002 = lm(y_IQ ~ .+I(x2_T^2)+I(x7_UA^2)-x4_CF-x5_F-x7_UA, data=twist); summary(fit0002)      # R²=0.8666; -x4_CF
 fit0003 = lm(y_IQ ~ .+I(x2_T^2)+I(x7_UA^2)-x4_CF-x7_UA, data=twist); summary(fit0003)           # R²=0.8667; x7_UA^2*, x5_F; +x5_F
 
-confint(fit2)
 
-residuals(fit1)
+fits <- list(
+  fit1 = fit1,
+  fit01 = fit01,
+  fit001 = fit001,
+  fit002 = fit002,
+  fit0001 = fit0001,
+  fit0002 = fit0002
+)
+
+par(mfrow = c(3, 2))
+for (i in 1:4) {
+  for (name in names(fits)) {
+    fit <- fits[[name]]
+    
+    if (i < 4) {
+      plot(fit, which = i, main = name)
+      
+    } else {
+      cook <- cooks.distance(fit)
+      threshold <- 4 / nobs(fit)
+      
+      plot(
+        cook,
+        type = "h",
+        main = name,
+        ylim = c(0, 0.13),
+        xlab = "Obs. number",
+        ylab = "Cook's distance"
+      )
+      
+      abline(h = threshold, col = "red", lty = 2)
+      
+      influential <- which(cook > threshold)
+      
+      text(
+        influential,
+        cook[influential],
+        labels = influential,
+        pos = 3,
+        cex = 0.8
+      )
+    }
+  }
+}
+
+par(mfrow = c(1, 1))
+
+AIC(fit1, fit01, fit001, fit002, fit0001, fit0002)
+BIC(fit1, fit01, fit001, fit002, fit0001, fit0002)
+
+FLAG = fit0002       # Fits Like A Glove (by the Anti-Gaeta League)
+
+plot(FLAG)
+
+confint(FLAG)
+
+residuals(FLAG)
 
 
-
-
-
-
+# a small step for a man crrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr, a giant leap for mankind crrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 
 
 

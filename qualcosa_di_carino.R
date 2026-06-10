@@ -178,7 +178,7 @@ for (i in 1:4) {
         ylab = "Cook's distance"
       )
       
-      abline(h = threshold, col = "red", lty = 2)
+      abline(h = threshold, col = "red", lty = 2)       # Seizing the means of production
       
       influential <- which(cook > threshold)
       

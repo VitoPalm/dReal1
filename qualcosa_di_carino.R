@@ -6,6 +6,7 @@ library(psych)          # corPlot
 # 0.1.
 twist = read.csv("Dataset_N7.csv", header=T)
 n = nrow(twist)
+while("twist" %in% search()) detach("twist")
 attach(twist)
 
 
@@ -22,16 +23,16 @@ lista_variabili <- list(
     x4_CF = x4_CF, x5_F = x5_F, x6_GSI = x6_GSI, x7_UA = x7_UA
 )
 
+cat(sprintf("%-8s %10.4s %10.4s\n", "", "StD", "Var"))
 for(nome in names(lista_variabili)) {
     dati = lista_variabili[[nome]]
-    stdev = sd(dati)
-    cat(sprintf("%-8s %10.4f\n", nome, stdev))
+    cat(sprintf("%-8s %10.4f %10.4f\n", nome, sd(dati), var(dati)))
 }
 
 var_coeff_y = sd(y_IQ) / mean(y_IQ) * 100; var_coeff_y  # around 15%
 
 # Old timey person (or catto)
-boxplot(y_IQ, notch=T)
+boxplot(y_IQ, notch=T, main = "Boxplot of y_IQ", ylab = "Value", xlab = "Dependent variable")
 boxplot(x1_ISO, x2_T, x3_MP, x4_CF, x5_F, x6_GSI, x7_UA,
         notch = TRUE,
         xlab = 'Independent variable',
@@ -100,15 +101,19 @@ row.names(frequenze) <- NULL
 frequenze_y_IQ <- dati_frequenze_variabili$y_IQ
 frequenze_y_IQ
 
+
+png(filename = "plottwists/hists.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
+par(mfrow = c(4, 2))
 for(nome in names(lista_variabili)) {
     dati = lista_variabili[[nome]]
 
     hist(dati, main='', xlab=nome)
 }
+dev.off()
 
-dev.new()
+
+png(filename = "plottwists/qq_normals.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
 par(mfrow = c(4, 2))
-
 for(nome in names(lista_variabili)) {
   
   dati <- lista_variabili[[nome]]
@@ -127,8 +132,9 @@ for(nome in names(lista_variabili)) {
         cex = 0.85, 
         font = 2) 
 }
+dev.off()
 
-par(mfrow = c(1, 1))
+
 
 
 
@@ -136,6 +142,8 @@ par(mfrow = c(1, 1))
 
 
 # 1.3.
+png(filename = "plottwists/scatters_y_vs_xs.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
+par(mfrow = c(4, 2))
 for (name in names(lista_variabili)) {
     if (name != "y_IQ") {
         data = lista_variabili[[name]]
@@ -154,10 +162,13 @@ for (name in names(lista_variabili)) {
         lines(seq_x, predizioni_y, col = "darkblue", lwd = 3, lty = 3)
     }
 }
+dev.off()
 
 independent_twist = twist
 independent_twist$y_IQ = NULL
+png(filename = "plottwists/scatters_all_indep.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
 plot(independent_twist)
+dev.off()
 
 
 pannello_lineare_e_quadratico <- function(x, y, ...) {

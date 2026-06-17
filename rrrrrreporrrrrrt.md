@@ -54,7 +54,6 @@ Per avere un'idea limitata ma immediata della natura dei dati, abbiamo visualizz
 Prima di tutto valutiamo gli indici di tendenza centrale (media e mediana) e di dispersione (deviazione standard) per tutte le caratteristiche del dataset.
 
 ```R console
-> summary(twist)
       y_IQ                x1_ISO                x2_T            
  Min.   :  85.76      Min.   :-1.71861     Min.   :-1.57489     
  1st Qu.: 117.65      1st Qu.:-0.60159     1st Qu.:-0.91172     
@@ -77,37 +76,77 @@ Prima di tutto valutiamo gli indici di tendenza centrale (media e mediana) e di 
  3rd Qu.: 0.78453     3rd Qu.: 0.6444 
  Max.   : 1.70911     Max.   : 1.6263 
 ```
+*summary*
 
 ```R console
-y_IQ        20.3977
-x1_ISO       1.0159
-x2_T         0.9618
-x3_MP        0.9746
-x4_CF        0.9741
-x5_F         1.0000
-x6_GSI       0.9879
-x7_UA        0.9997
+                StD        Var
+y_IQ        20.3977   416.0670
+x1_ISO       1.0159     1.0321
+x2_T         0.9618     0.9251
+x3_MP        0.9746     0.9498
+x4_CF        0.9741     0.9490
+x5_F         1.0000     1.0000
+x6_GSI       0.9879     0.9759
+x7_UA        0.9997     0.9995
 ```
+*deviazione standard e varianza*
 
 Notiamo che le variabili indipendenti presentano una derivazione standard prossima ad 1, ed una media prossima a 0, il che suggerisce che si possa trattare di dati standardizzati. La variabile dipendente invece è definita nel range [85.76, 181.18], per cui ne possiamo valutare il coefficiente di variazione (`sd(y_IQ) / mean(y_IQ)`), che si attesta attorno al 15%.
 
 
-Queste informazioni possono essere visualizzate in maniera efficace mediante l'utilizzo dei boxplot.
+Queste informazioni possono essere analizzate in maniera efficace mediante l'utilizzo dei boxplot. Si sceglie di visualizzarne i notch e si tiene conto del fatto che il numero di osservazioni è uguale per tutte le variabili, per cui l'uso di `varwidth` è indifferente.
+
 
 <!-- *whisker plots start appearing* -->
-- Comment the data
-- indici di tendenza centrale: media, mediana (boh mostra i dati)
-- indici di dispersione: varianza (e il cugino), escursione campionaria (range)
-- Consider doing fancy shit for labels
-- Notiamo che non ci sono outliers?
-- Other noticeable thinghies (hanno i baffi)
+![alt text](plottwists/boxplot_y.png)
+![alt text](plottwists/boxplot_xs.png)
+
+Si nota:
+- l'assenza di outliers prima di Q1 - 1.5\*IQR e oltre Q3 + 1.5\*IQR per tutte le variabili considerate, con influenza sulla lunghezza dei baffi 
+  - la variabile x5_F ha un'escursione campionaria particolarmente superiore alle altre, nonostante un IQR (range Q1-Q3) tra i più piccoli
+- le notch di tutte le variabili indipendenti tendono a sovrapporsi, che rende possibile eventuali uguaglianze tra mediane
 
 ## 1.2. Istogrammi e Q-Q plot
-- Explain how you choose number of thinghies 🪣
-- Denote clear noticeable thinghies
-- Shits and giggles
-- since we don't know if they're "normal" (what does that mean anyway?): Q-Q plots
-- 
+Per una sintesi visiva della distribuzione di frequenza dei valori delle caratteristiche prese in considerazione si può fare uso di istogrammi.
+Ricordando che l'informazione è di tipo quantitativo continuo, c'è la necessità di definire il numero di classi (k) in cui suddividere l'intervallo di osservazione. 
+Di norma si procede con la relazione empirica di Sturges (k = ceil(1 + 3.3 * log10(n))), o seguendo la norma UNI 4724-66 (secondo cui per una numerosità campionaria fino a 100 elementi si usano massimo 8 classi, 10 fino a 250), ma il comando `hist()` determina i confini in maniera che i confini risultino facile da leggere.
+
+![histograms](plottwists/hists.png)
+
+Non si notano somiglianze a distribuzioni particolari per la maggior parte delle variabili, meno che per y_IQ e x5_F, che nonostante alcuni rilevanti scostamenti, sono approssimabili a distribuzioni normali. 
+
+Per verificare ciò è possibile analizzarne i Q-Q plots, grafici che confrontano i quantili dei dati campionari con quelli della distribuzione teorica supposta (normale: `qqnorm()`).
+
+Tale visualizzazione è accompagnata dai risultati del test d'ipotesi di Shapiro-Wilk ovvero:
+$$
+\begin{array}{ll}
+H_0: \text{i dati provengono da} & \qquad\qquad H_A: \text{i dati non provengono da} \\
+\phantom{H_0: }\text{una distribuzione normale} & \qquad\qquad \phantom{H_A: }\text{una distribuzione normale}
+\end{array}
+$$
+
+Il test si effettua valutando la statistica test:
+$$
+0 \underset{H_A}{\le} W = \frac{\left(\sum_{i=1}^n a_i x_{(i)}\right)^2}{\sum_{i=1}^n (x_i - \bar{x})^2} \underset{H_0}{\le} 1
+$$
+
+Scegliendo un livello di confidenza 1-α = 0.95 il criterio di scelta è:
+$$
+p = \mathbb{P}(T_n = W < t_n = w_{\text{oss}} \mid H_0) \space \underset{H_A}{\overset{H_0}{\gtrless}} \space \alpha = 0.05
+$$
+
+
+
+![qq_normals](plottwists/qq_normals.png)
+
+Notiamo che nel caso di y_IQ il p-value è 0.86, ovvero dando per scontato che la popolazione sia perfettamente normale, con l'86% di probabilità c'è la possibilità di ottenere un campione meno conforme alla distribuzione normale. 
+
+Dato che il livello di significatività è 0.05, non possiamo rifiutare l'ipotesi nulla, di conseguenza possiamo assumere che i dati provengano da una distribuzione normale.
+
+Ciò accade anche per la variabile x5_F, che come visualizzato sul Q-Q plot segue con buona approssimazione la retta teorica `qqline()`. 
+
+
+
 
 ## 1.3. Scatter Plot
 - Grandi quelli con Y

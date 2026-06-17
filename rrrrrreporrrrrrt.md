@@ -149,6 +149,14 @@ Ciò accade anche per la variabile x5_F, che come visualizzato sul Q-Q plot segu
 
 
 ## 1.3. Scatter Plot
+
+![scatter_y_vs_xs_lines](plottwists/scatters_y_vs_xs_lines.png)
+
+![scatter_xs](plottwists/scatters_xs.png)
+
+![scatter_all_lines](plottwists/scatters_all_lines.png)
+
+
 - Grandi quelli con Y
 - independent twist
 - honorable mentions
@@ -157,6 +165,13 @@ Ciò accade anche per la variabile x5_F, che come visualizzato sul Q-Q plot segu
 
 
 ## 1.4. (covariances too) CORRELATION = CAUSATION SHIT NEEDS BETTER NAME (CONTROVERSIAL)
+
+![corrplot](plottwists/corrplot.png){width=80%}
+
+![corrplot_heatmap](plottwists/corrplot_heatmap.png){width=80%}
+
+![x1_ISO_vs_y_IQ](plottwists/x1_ISO_vs_y_IQ.png){width=40%} ![x5_F_vs_x7_UA](plottwists/x5_F_vs_x7_UA.png){width=40%}
+
 - cov just cause we know it by name
 - correlation (con tabella di interpretazioni)
 - comment on correlation (may integrate next entry)

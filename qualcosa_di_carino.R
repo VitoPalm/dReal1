@@ -103,35 +103,35 @@ frequenze_y_IQ
 
 
 png(filename = "plottwists/hists.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
-par(mfrow = c(4, 2))
-for(nome in names(lista_variabili)) {
-    dati = lista_variabili[[nome]]
+    par(mfrow = c(4, 2))
+    for(nome in names(lista_variabili)) {
+        dati = lista_variabili[[nome]]
 
-    hist(dati, main='', xlab=nome)
-}
+        hist(dati, main='', xlab=nome)
+    }
 dev.off()
 
 
 png(filename = "plottwists/qq_normals.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
-par(mfrow = c(4, 2))
-for(nome in names(lista_variabili)) {
-  
-  dati <- lista_variabili[[nome]]
-  
-  shapiro_risultato <- shapiro.test(dati)
-  p_val <- round(shapiro_risultato$p.value, 4)
-  
-  qqnorm(dati, main = nome)
-  qqline(dati, col = "red")
-  
-  mtext(text = paste("p-val:", p_val), 
-        side = 1, 
-        line = -1.2, 
-        adj = 0.95,
-        col = ifelse(p_val < 0.05, "red", "darkgreen"), 
-        cex = 0.85, 
-        font = 2) 
-}
+    par(mfrow = c(4, 2))
+    for(nome in names(lista_variabili)) {
+    
+    dati <- lista_variabili[[nome]]
+    
+    shapiro_risultato <- shapiro.test(dati)
+    p_val <- round(shapiro_risultato$p.value, 4)
+    
+    qqnorm(dati, main = nome)
+    qqline(dati, col = "red")
+    
+    mtext(text = paste("p-val:", p_val), 
+            side = 1, 
+            line = -1.2, 
+            adj = 0.95,
+            col = ifelse(p_val < 0.05, "red", "darkgreen"), 
+            cex = 0.85, 
+            font = 2) 
+    }
 dev.off()
 
 
@@ -142,64 +142,74 @@ dev.off()
 
 
 # 1.3.
-png(filename = "plottwists/scatters_y_vs_xs.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
-par(mfrow = c(4, 2))
-for (name in names(lista_variabili)) {
-    if (name != "y_IQ") {
-        data = lista_variabili[[name]]
-        
-        plot(data, y_IQ, 
-            main = '',
-            xlab = name, 
-            ylab = "y_IQ",
-            pch = 19,
-            col = "blue")
+png(filename = "plottwists/scatters_y_vs_xs_lines.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
+    par(mfrow = c(4, 2))
+    for (name in names(lista_variabili)) {
+        if (name != "y_IQ") {
+            data = lista_variabili[[name]]
+            
+            plot(data, y_IQ, 
+                main = '',
+                xlab = name, 
+                ylab = "y_IQ",
+                pch = 19,
+                col = "blue")
 
-        abline(lm(y_IQ ~ data), col = "red", lwd = 2)
-        seq_x <- seq(min(data, na.rm = TRUE), max(data, na.rm = TRUE), length.out = 100)
-        modello_quadratico <- lm(y_IQ ~ poly(data, 2, raw = TRUE))
-        predizioni_y <- predict(modello_quadratico, newdata = data.frame(data = seq_x))
-        lines(seq_x, predizioni_y, col = "darkblue", lwd = 3, lty = 3)
-    }
+            abline(lm(y_IQ ~ data), col = "red", lwd = 2)
+            seq_x <- seq(min(data, na.rm = TRUE), max(data, na.rm = TRUE), length.out = 100)
+            modello_quadratico <- lm(y_IQ ~ poly(data, 2, raw = TRUE))
+            predizioni_y <- predict(modello_quadratico, newdata = data.frame(data = seq_x))
+            lines(seq_x, predizioni_y, col = "darkblue", lwd = 3, lty = 3)
+        }
 }
 dev.off()
 
 independent_twist = twist
 independent_twist$y_IQ = NULL
-png(filename = "plottwists/scatters_all_indep.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
-plot(independent_twist)
+png(filename = "plottwists/scatters_xs.png", width = 14, height = 14, units = "in", res = 200, bg = "white")
+    plot(independent_twist)
 dev.off()
 
+png(filename = "plottwists/scatters_all_lines.png", width = 14, height = 14, units = "in", res = 200, bg = "white")
+    pannello_lineare_e_quadratico <- function(x, y, ...) {
+        points(x, y, ...)
+        abline(lm(y ~ x), col = "blue", lwd = 1.5)
+        seq_x <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), length.out = 100)
+        modello_quadratico <- lm(y ~ poly(x, 2, raw = TRUE))
+        predizioni_y <- predict(modello_quadratico, newdata = data.frame(x = seq_x))
+        lines(seq_x, predizioni_y, col = "red", lwd = 2, lty = "dashed")
+    }
 
-pannello_lineare_e_quadratico <- function(x, y, ...) {
-    points(x, y, ...)
-    abline(lm(y ~ x), col = "blue", lwd = 1.5)
-    seq_x <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), length.out = 100)
-    modello_quadratico <- lm(y ~ poly(x, 2, raw = TRUE))
-    predizioni_y <- predict(modello_quadratico, newdata = data.frame(x = seq_x))
-    lines(seq_x, predizioni_y, col = "red", lwd = 2, lty = "dashed")
-}
-
-pairs(twist, 
-      panel = pannello_lineare_e_quadratico, 
-      pch = 1, 
-      col = "black", 
-      cex = 0.7)
+    pairs(twist, 
+        panel = pannello_lineare_e_quadratico, 
+        pch = 1, 
+        col = "black", 
+        cex = 0.7)
+dev.off()
 
 
 # 1.4.
 cv = cov(twist)
 cr = cor(twist)
-corrplot(cr, method = 'ellipse')
-corrplot.mixed(cr, number.cex=0.8, tl.cex=0.8)
 
-corPlot(cr, cex = 1.1, show.legend=TRUE, main="Correlation plot")
+png(filename = "plottwists/corrplot.png", width = 10, height = 10, units = "in", res = 200, bg = "white")
+    corrplot(cr, method = 'ellipse')
+dev.off()
+# corrplot.mixed(cr, number.cex=0.8, tl.cex=0.8)
+
+png(filename = "plottwists/corrplot_heatmap.png", width = 10, height = 10, units = "in", res = 200, bg = "white")
+    corPlot(cr, cex = 1.1, show.legend=TRUE, main="Correlation plot")
+dev.off()
 
 
 
-plot(x1_ISO, y_IQ)
+png(filename = "plottwists/x1_ISO_vs_y_IQ.png", width = 4, height = 4, units = "in", res = 400, bg = "white")
+    plot(x1_ISO, y_IQ)
+dev.off()
 
-plot(x5_F, x7_UA)
+png(filename = "plottwists/x5_F_vs_x7_UA.png", width = 4, height = 4, units = "in", res = 400, bg = "white")
+    plot(x5_F, x7_UA)
+dev.off()
 
 
 
@@ -234,40 +244,44 @@ fits <- list(
   fit0002 = fit0002
 )
 
-par(mfrow = c(3, 2))
+
+
 for (i in 1:4) {
-  for (name in names(fits)) {
-    fit <- fits[[name]]
+    png(filename = sprintf("plottwists/diagnostics_%d.png", i), width = 12, height = 16, units = "in", res = 300, bg = "white")
+    par(mfrow = c(3, 2))
+    for (name in names(fits)) {
+        fit <- fits[[name]]
     
-    if (i < 4) {
-      plot(fit, which = i, main = name)
+        if (i < 4) {
+            plot(fit, which = i, main = name)
       
-    } else {
-      cook <- cooks.distance(fit)
-      threshold <- 4 / nobs(fit)
-      
-      plot(
-        cook,
-        type = "h",
-        main = name,
-        ylim = c(0, 0.13),
-        xlab = "Obs. number",
-        ylab = "Cook's distance"
-      )
-      
-      abline(h = threshold, col = "red", lty = 2)       # Seizing the means of production
-      
-      influential <- which(cook > threshold)
-      
-      text(
-        influential,
-        cook[influential],
-        labels = influential,
-        pos = 3,
-        cex = 0.8
-      )
-    }
+        } else {
+            cook <- cooks.distance(fit)
+            threshold <- 4 / nobs(fit)
+            
+            plot(
+                cook,
+                type = "h",
+                main = name,
+                ylim = c(0, 0.13),
+                xlab = "Obs. number",
+                ylab = "Cook's distance"
+            )
+            
+            abline(h = threshold, col = "red", lty = 2)       # Seizing the means of production
+            
+            influential <- which(cook > threshold)
+            
+            text(
+                influential,
+                cook[influential],
+                labels = influential,
+                pos = 3,
+                cex = 0.8
+            )
+        }
   }
+    dev.off()
 }
 
 par(mfrow = c(1, 1))

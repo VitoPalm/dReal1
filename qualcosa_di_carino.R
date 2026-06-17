@@ -9,22 +9,96 @@ n = nrow(twist)
 attach(twist)
 
 
-# 1.1.
-twist_sorted = twist[order(y_IQ), ]
+twist_sorted = twist[order(y_IQ),]
 
 head(twist_sorted)
 tail(twist_sorted)
 
 
-# 1.2.
+# 1.1.
 summary(twist)
-
-
-# 1.3.
 lista_variabili <- list(
-  y_IQ = y_IQ, x1_ISO = x1_ISO, x2_T = x2_T, x3_MP = x3_MP, 
-  x4_CF = x4_CF, x5_F = x5_F, x6_GSI = x6_GSI, x7_UA = x7_UA
+    y_IQ = y_IQ, x1_ISO = x1_ISO, x2_T = x2_T, x3_MP = x3_MP, 
+    x4_CF = x4_CF, x5_F = x5_F, x6_GSI = x6_GSI, x7_UA = x7_UA
 )
+
+for(nome in names(lista_variabili)) {
+    dati = lista_variabili[[nome]]
+    stdev = sd(dati)
+    cat(sprintf("%-8s %10.4f\n", nome, stdev))
+}
+
+var_coeff_y = sd(y_IQ) / mean(y_IQ) * 100; var_coeff_y  # around 15%
+
+# Old timey person (or catto)
+boxplot(y_IQ, notch=T)
+boxplot(x1_ISO, x2_T, x3_MP, x4_CF, x5_F, x6_GSI, x7_UA,
+        notch = TRUE,
+        xlab = 'Independent variable',
+        ylab = 'Value',
+        main = 'Boxplots of Xs',
+        names = c("x1_ISO", "x2_T", "x3_MP", "x4_CF", "x5_F", "x6_GSI", "x7_UA")
+)
+
+
+# 1.2.
+dati_frequenze <- function(dati, nome = "x", k = NULL) {
+    dati <- dati[!is.na(dati)]
+    N <- length(dati)
+
+    if (N == 0) {
+        stop("Nessun dato disponibile.")
+    }
+
+    if (is.null(k)) {
+        k <- ceiling(1 + 3.3 * log10(N))
+    }
+
+    minimo <- min(dati)
+    massimo <- max(dati)
+
+    if (minimo == massimo) {
+        ampiezza <- ifelse(minimo == 0, 1, abs(minimo) * 0.1)
+        minimo <- minimo - ampiezza / 2
+        massimo <- massimo + ampiezza / 2
+    }
+
+    ampiezza <- (massimo - minimo) / k
+    limiti <- minimo + 0:k * ampiezza
+    limiti_tag <- limiti
+    limiti[length(limiti)] <- limiti[length(limiti)] +
+        .Machine$double.eps * max(1, abs(limiti[length(limiti)]))
+
+    classi <- cut(dati, breaks = limiti, right = FALSE, include.lowest = TRUE)
+    frequenza <- as.integer(table(classi))
+    limite_sx <- head(limiti_tag, -1)
+    limite_dx <- tail(limiti_tag, -1)
+    centro <- (limite_sx + limite_dx) / 2
+    frequenza_relativa <- frequenza / N
+
+    data.frame(
+        variabile = nome,
+        classe = seq_along(frequenza),
+        limite_inferiore = limite_sx,
+        limite_superiore = limite_dx,
+        centro_classe = centro,
+        frequenza = frequenza,
+        frequenza_relativa = frequenza_relativa,
+        frequenza_cumulata = cumsum(frequenza),
+        frequenza_relativa_cumulata = cumsum(frequenza_relativa)
+    )
+}
+
+dati_frequenze_variabili <- lapply(names(lista_variabili), function(nome) {
+    dati_frequenze(lista_variabili[[nome]], nome)
+})
+names(dati_frequenze_variabili) <- names(lista_variabili)
+
+frequenze <- do.call(rbind, dati_frequenze_variabili)
+row.names(frequenze) <- NULL
+
+frequenze_y_IQ <- dati_frequenze_variabili$y_IQ
+frequenze_y_IQ
 
 for(nome in names(lista_variabili)) {
     dati = lista_variabili[[nome]]
@@ -59,18 +133,9 @@ par(mfrow = c(1, 1))
 
 
 
-# 1.4.
-boxplot(y_IQ, notch=T)
-boxplot(x1_ISO, x2_T, x3_MP, x4_CF, x5_F, x6_GSI, x7_UA,
-        notch = TRUE,
-        xlab = 'Independent variable',
-        ylab = 'Value',
-        main = 'Boxplots of Xs',
-        names = c("x1_ISO", "x2_T", "x3_MP", "x4_CF", "x5_F", "x6_GSI", "x7_UA")
-)
 
 
-# 1.5.
+# 1.3.
 for (name in names(lista_variabili)) {
     if (name != "y_IQ") {
         data = lista_variabili[[name]]
@@ -110,7 +175,8 @@ pairs(twist,
       col = "black", 
       cex = 0.7)
 
-# 1.6.
+
+# 1.4.
 cv = cov(twist)
 cr = cor(twist)
 corrplot(cr, method = 'ellipse')
@@ -214,4 +280,11 @@ residuals(FLAG)
 # 99.
 
 reg = lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA, data = twist); summary(reg)
-fff = step(lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA + I(x1_ISO^2) + I(x2_T^2) + I(x3_MP^2) + I(x4_CF^2) + I(x5_F^2) + I(x6_GSI^2) + I(x7_UA^2) + (x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA)^2, data = twist), direction = "both", trace = 1, k = log(n)); summary(fff)
+fff = step(lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA +
+                     I(x1_ISO^2) + I(x2_T^2) + I(x3_MP^2) + I(x4_CF^2) + I(x5_F^2) + I(x6_GSI^2) + I(x7_UA^2) +
+                     (x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA)^2,
+                     data = twist),
+                     direction = "both",
+                     trace = 1,
+                     k = log(n));
+                     summary(fff)

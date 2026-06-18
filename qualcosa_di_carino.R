@@ -177,8 +177,8 @@ dev.off()
 
 
 
-
 # 2.1.
+# We'll do it R way.
 fit0 = lm(y_IQ ~ ., data=twist); summary(fit0)                                                  # R²=0.8408; x4_CF, x5_F**, x7_UA
 fit1 = lm(y_IQ ~ .-x7_UA, data=twist); summary(fit1)                                            # R²=0.8408; -x7_UA
 fit2 = lm(y_IQ ~ .-x7_UA-x4_CF, data=twist); summary(fit2)                                      # R²=0.8371; -x4_CF
@@ -198,23 +198,21 @@ fit0002 = lm(y_IQ ~ .+I(x2_T^2)+I(x7_UA^2)-x4_CF-x5_F-x7_UA, data=twist); summar
 fit0003 = lm(y_IQ ~ .+I(x2_T^2)+I(x7_UA^2)-x4_CF-x7_UA, data=twist); summary(fit0003)           # R²=0.8667; x7_UA^2*, x5_F; +x5_F
 
 
-
-fits <- list(
-  fit1 = fit1,
-  fit01 = fit01,
-  fit001 = fit001,
-  fit002 = fit002,
-  fit0001 = fit0001,
-  fit0002 = fit0002
+cool_fits <- list(
+    fit1 = fit1,
+    fit01 = fit01,
+    fit001 = fit001,
+    fit002 = fit002,
+    fit0001 = fit0001,
+    fit0002 = fit0002
 )
-
 
 
 for (i in 1:4) {
     png(filename = sprintf("plottwists/diagnostics_%d.png", i), width = 8, height = 12, units = "in", res = 200, bg = "white")
     par(mfrow = c(3, 2))
-        for (name in names(fits)) {
-            fit <- fits[[name]]
+        for (name in names(cool_fits)) {
+            fit <- cool_fits[[name]]
         
             if (i < 4) {
                 plot(fit, which = i, main = name)
@@ -239,17 +237,35 @@ for (i in 1:4) {
 AIC(fit1, fit01, fit001, fit002, fit0001, fit0002)
 BIC(fit1, fit01, fit001, fit002, fit0001, fit0002)
 
+fits_full <- list(
+    fit0 = fit0,
+    fit1 = fit1,
+    fit2 = fit2,
+    fit00 = fit00,
+    fit01 = fit01,
+    fit000 = fit000,
+    fit001 = fit001,
+    fit002 = fit002,
+    fit003 = fit003,
+    fit0000 = fit0000,
+    fit0001 = fit0001,
+    fit0002 = fit0002,
+    fit0003 = fit0003
+)
+
 # Tabella riassuntiva per confrontare le metriche di tutti i modelli
 confronto_modelli <- data.frame(
-  R_quadrato     = sapply(fits, function(m) summary(m)$r.squared),
-  R_quadrato_adj = sapply(fits, function(m) summary(m)$adj.r.squared),
-  AIC            = sapply(fits, AIC),
-  BIC            = sapply(fits, BIC)
+    RSS            = sapply(fits_full, function(m) deviance(m)),
+    R2             = sapply(fits_full, function(m) summary(m)$r.squared),
+    R2a            = sapply(fits_full, function(m) summary(m)$adj.r.squared),
+    AIC            = sapply(fits_full, AIC),
+    BIC            = sapply(fits_full, BIC)
 )
 print(confronto_modelli)
 
 
 FLAG = fit0002       # Fits Like A Glove
+
 
 png(filename = "plottwists/diagnostics_FLAG.png", width = 10, height = 10, units = "in", res = 200, bg = "white")
 par(mfrow = c(2, 2))

@@ -417,7 +417,7 @@ In maniera occhiometrica, il più carino per ogni categoria diagnostica
 
 È possibile effettuare un'ulteriore analisi diagnostica su quanto i regressori siano correlati tra loro, ovvero la multicollinearità del modello scelto (`vif(FLAG)`). 
 
-Il VIF viene calcolato per ciascun regressore isolandolo alternativamente come variabile dipendente da prevedere tramite regressione lineare semplice in funzione di tutti gli altri; il valore ottenuto indica quindi quanto quel singolo regressore sia spiegato dalle rimanenti variabili
+Per calcolare il VIF di ciascun regressore lo isoliamo come variabile dipendente, e ne prevediamo poi il valore tramite regressione lineare semplice, in funzione di tutti gli altri; questo valore indica quindi quanto quel singolo regressore sia spiegato dalle rimanenti variabili.
 
 $$
 1 \underset{\text{best}}< VIF_j = \frac{1}{1-R_j^2}
@@ -427,6 +427,20 @@ $$
     x1_ISO       x2_T      x3_MP     x6_GSI  I(x2_T^2) I(x7_UA^2) 
   1.079947   1.079358   1.024063   1.051543   1.021741   1.066195 
 ```
+*Multicollinearità di FLAG*
+
+Come si può notare, il modello FLAG non mostra segni di collinearità tra più variabili.
+Abbiamo trovato interessante mostrare un caso in cui i parametri del modello presentano un VIF non trascurabile. `vif(fit0000)` restituisce ad esempio:
+
+```R console
+        x5_F    I(x7_UA^2)
+    7.439663      6.433935
+```
+*Estratto dei VIF>5*
+
+Il valore del VIF di x5_F si allinea con i risultati dell'[analisi di correlazione](#14-analisi-di-correlazione), in cui vediamo chiaramente come x5_F sia correlato con diverse altre variabili.
+<!-- Inaspettato -->
+
 
 
 

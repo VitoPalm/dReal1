@@ -233,27 +233,6 @@ F-statistic: 69.43 on 7 and 92 DF,  p-value: < 2.2e-16
 
 
 
-```R console
-Residuals:
-     Min       1Q   Median       3Q      Max 
--16.0073  -6.3342  -0.2533   5.4074  23.6955 
-
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 133.6439     0.8534 156.604  < 2e-16 ***
-x1_ISO      -10.0368     0.8665 -11.583  < 2e-16 ***
-x2_T         -9.2762     0.9170 -10.116  < 2e-16 ***
-x3_MP         5.0459     0.9477   5.324 6.89e-07 ***
-x5_F         -2.9301     0.9372  -3.127  0.00235 ** 
-x6_GSI       -8.5279     0.8795  -9.696 8.14e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 8.449 on 94 degrees of freedom
-Multiple R-squared:  0.8371,	Adjusted R-squared:  0.8284 
-F-statistic:  96.6 on 5 and 94 DF,  p-value: < 2.2e-16
-```
-*fit2*
 
 
 ```R console
@@ -302,28 +281,6 @@ F-statistic: 15.44 on 28 and 71 DF,  p-value: < 2.2e-16
 *fit00*
 
 
-```R console
-Residuals:
-     Min       1Q   Median       3Q      Max 
--16.6852  -5.9045  -0.1053   5.9045  24.0698 
-
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 133.8463     0.8533 156.856  < 2e-16 ***
-x1_ISO       -9.8406     0.8657 -11.368  < 2e-16 ***
-x2_T         -9.8988     0.9791 -10.110  < 2e-16 ***
-x3_MP         4.7492     0.9545   4.976 2.97e-06 ***
-x5_F         -3.0566     0.9309  -3.284  0.00145 ** 
-x6_GSI       -8.5121     0.8709  -9.774 6.15e-16 ***
-x3_MP:x4_CF  -1.6957     0.9981  -1.699  0.09267 .  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 8.366 on 93 degrees of freedom
-Multiple R-squared:  0.842,	Adjusted R-squared:  0.8318 
-F-statistic:  82.6 on 6 and 93 DF,  p-value: < 2.2e-16
-```
-*fit01*
 
 
 ```R console
@@ -373,95 +330,62 @@ F-statistic: 15.76 on 29 and 70 DF,  p-value: < 2.2e-16
 *fit000*
 
 
-```R console
-Residuals:
-     Min       1Q   Median       3Q      Max 
--17.1748  -5.7285   0.1111   5.5081  22.6420 
 
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 137.3928     1.2623 108.842  < 2e-16 ***
-x1_ISO       -9.9231     0.8461 -11.728  < 2e-16 ***
-x2_T         -9.2037     0.8958 -10.275  < 2e-16 ***
-x3_MP         5.6699     0.8621   6.577 2.77e-09 ***
-x4_CF         1.2074     0.8659   1.395 0.166488    
-x6_GSI       -8.4742     0.8522  -9.944 2.68e-16 ***
-I(x7_UA^2)   -3.6746     0.9313  -3.946 0.000154 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 8.184 on 93 degrees of freedom
-Multiple R-squared:  0.8488,	Adjusted R-squared:  0.839 
-F-statistic:    87 on 6 and 93 DF,  p-value: < 2.2e-16
-```
-*fit001*
+
+
+
+
 
 
 ```R console
 Residuals:
      Min       1Q   Median       3Q      Max 
--16.8736  -5.5754   0.1111   5.7994  22.3966 
+-18.6845  -4.0207   0.7614   4.4482  19.3762 
 
 Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 137.3643     1.2685 108.291  < 2e-16 ***
-x1_ISO       -9.7944     0.8452 -11.588  < 2e-16 ***
-x2_T         -9.3718     0.8921 -10.506  < 2e-16 ***
-x3_MP         5.8399     0.8577   6.809 9.18e-10 ***
-x6_GSI       -8.4243     0.8557  -9.845 3.92e-16 ***
-I(x7_UA^2)   -3.6860     0.9359  -3.938 0.000157 ***
+               Estimate Std. Error t value Pr(>|t|)
+(Intercept)   141.87070    2.53680  55.925  < 2e-16 ***
+x1_ISO         -9.65770    1.07920  -8.949 3.70e-13 ***
+x2_T          -10.19275    1.15376  -8.834 5.97e-13 ***
+x3_MP           4.75688    1.26402   3.763 0.000348 ***
+x4_CF           1.96591    1.16918   1.681 0.097199 .
+x5_F            0.65264    2.22233   0.294 0.769890
+x6_GSI         -8.58417    1.01232  -8.480 2.65e-12 ***
+x7_UA          -0.06750    1.24036  -0.054 0.956760
+I(x2_T^2)      -4.44652    1.17753  -3.776 0.000334 ***
+I(x7_UA^2)     -4.83925    2.28288  -2.120 0.037622 *
+x1_ISO:x2_T     1.35344    1.04443   1.296 0.199338
+x1_ISO:x3_MP   -0.18903    1.19443  -0.158 0.874717
+x1_ISO:x4_CF    0.43473    1.21711   0.357 0.722047
+x1_ISO:x5_F     1.12258    1.19225   0.942 0.349698
+x1_ISO:x6_GSI  -0.11269    1.05399  -0.107 0.915162
+x1_ISO:x7_UA   -0.58473    1.26820  -0.461 0.646201
+x2_T:x3_MP      0.46159    1.15652   0.399 0.691035
+x2_T:x4_CF     -1.91836    1.17446  -1.633 0.106939
+x2_T:x5_F      -1.98445    1.29779  -1.529 0.130813
+x2_T:x6_GSI     0.56059    1.10727   0.506 0.614272
+x2_T:x7_UA     -0.44878    1.20544  -0.372 0.710815
+x3_MP:x4_CF    -1.41394    1.22579  -1.153 0.252690
+x3_MP:x5_F     -0.64495    1.10750  -0.582 0.562230
+x3_MP:x6_GSI   -0.02745    1.18863  -0.023 0.981640
+x3_MP:x7_UA     0.19452    1.10813   0.176 0.861172
+x4_CF:x5_F     -0.49071    0.97341  -0.504 0.615787
+x4_CF:x6_GSI    1.08155    1.13058   0.957 0.342094
+x4_CF:x7_UA     0.80578    1.06138   0.759 0.450329
+x5_F:x6_GSI     0.11572    1.20237   0.096 0.923607
+x5_F:x7_UA      0.46718    1.18134   0.395 0.693722
+x6_GSI:x7_UA   -1.27289    1.09312  -1.164 0.248250
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 8.225 on 94 degrees of freedom
-Multiple R-squared:  0.8456,	Adjusted R-squared:  0.8374 
-F-statistic:   103 on 5 and 94 DF,  p-value: < 2.2e-16
-```
-*fit002*
-
-
-```R console
-Residuals:
-     Min       1Q   Median       3Q      Max 
--17.4235  -5.9559   0.1778   5.3770  22.0945 
-
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 138.4612     2.2119  62.598  < 2e-16 ***
-x1_ISO       -9.7195     0.8570 -11.341  < 2e-16 ***
-x2_T         -9.4116     0.8975 -10.487  < 2e-16 ***
-x3_MP         6.2029     1.0484   5.917 5.43e-08 ***
-x5_F          1.2013     1.9813   0.606   0.5458    
-x6_GSI       -8.4510     0.8597  -9.830 4.68e-16 ***
-I(x7_UA^2)   -4.7789     2.0326  -2.351   0.0208 *  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 8.253 on 93 degrees of freedom
-Multiple R-squared:  0.8462,	Adjusted R-squared:  0.8363 
-F-statistic:  85.3 on 6 and 93 DF,  p-value: < 2.2e-16
-```
-*fit003*
-
-```R console
-
+Residual standard error: 8.107 on 69 degrees of freedom
+Multiple R-squared:  0.8899,    Adjusted R-squared:  0.842
+F-statistic: 18.59 on 30 and 69 DF,  p-value: < 2.2e-16
 ```
 *fit0000*
 
-```R console
 
-```
-*fit0001*
-
-```R console
-
-```
-*fit0002*
-
-```R console
-
-```
-*fit0003*
 
 
 
@@ -491,8 +415,18 @@ In maniera occhiometrica, il più carino per ogni categoria diagnostica
 ![diagnostics_FLAG](plottwists/diagnostics_FLAG.png)
 
 
+È possibile effettuare un'ulteriore analisi diagnostica su quanto i regressori siano correlati tra loro, ovvero la multicollinearità del modello scelto (`vif(FLAG)`). 
 
+Il VIF viene calcolato per ciascun regressore isolandolo alternativamente come variabile dipendente da prevedere tramite regressione lineare semplice in funzione di tutti gli altri; il valore ottenuto indica quindi quanto quel singolo regressore sia spiegato dalle rimanenti variabili
 
+$$
+1 \underset{\text{best}}< VIF_j = \frac{1}{1-R_j^2}
+$$
+
+```R console
+    x1_ISO       x2_T      x3_MP     x6_GSI  I(x2_T^2) I(x7_UA^2) 
+  1.079947   1.079358   1.024063   1.051543   1.021741   1.066195 
+```
 
 
 

@@ -1,6 +1,8 @@
 # Weighs 0 Bytes (or, does it? *moon men starts playing*)
 library(corrplot)       # guess
 library(psych)          # corPlot
+library(car)            # vrrrrrrom (per vif, multicollinearità)
+
 
 
 # 0.1.
@@ -196,6 +198,7 @@ fit0002 = lm(y_IQ ~ .+I(x2_T^2)+I(x7_UA^2)-x4_CF-x5_F-x7_UA, data=twist); summar
 fit0003 = lm(y_IQ ~ .+I(x2_T^2)+I(x7_UA^2)-x4_CF-x7_UA, data=twist); summary(fit0003)           # R²=0.8667; x7_UA^2*, x5_F; +x5_F
 
 
+
 fits <- list(
   fit1 = fit1,
   fit01 = fit01,
@@ -220,20 +223,13 @@ for (i in 1:4) {
                 cook <- cooks.distance(fit)
                 threshold <- 4 / nobs(fit)
                 
-                plot(
-                    cook,
-                    type = "h",
-                    main = name,
-                    ylim = c(0, 0.13),
-                    xlab = "Obs. number",
-                    ylab = "Cook's distance"
-                )
+                plot(cook, type="h", main=name, ylim=c(0, 0.13), xlab="Obs. number", ylab="Cook's distance")
                 
-                abline(h = threshold, col = "red", lty = 2)       # Seizing the means of production
+                abline(h=threshold, col="red", lty=2)       # Seizing the means of production
                 
                 influential <- which(cook > threshold)
                 
-                text(influential, cook[influential], labels = influential, pos = 3, cex = 0.8)
+                text(influential, cook[influential], labels=influential, pos=3, cex=0.8)
             }
         }
     dev.off()
@@ -265,8 +261,8 @@ confint(FLAG)
 pole = residuals(FLAG)
 shapiro.test(pole)      # gotta see if it's normal
 
-library(car)            # vrrrrrrom
-vif(FLAG)               # multicollinearità
+vif(FLAG)               # variance inflation factor, multicollinearità
+vif(fit0000)
 
 # a small step for a man crrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr, a giant leap for mankind crrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 

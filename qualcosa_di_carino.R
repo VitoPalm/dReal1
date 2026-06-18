@@ -48,35 +48,28 @@ dev.off()
 
 
 # 1.2.
-dati_frequenze <- function(dati, nome = "x") {
-    dati <- dati[!is.na(dati)]
-    N <- length(dati)
+# Creazione tabella frequenze per variabili continue
+dati_frequenze_variabili <- list()
 
-    k <- ceiling(1 + 3.3 * log10(N))
+for(nome in names(lista_variabili)) {
+    dati = lista_variabili[[nome]]
 
+    k = ceiling(1 + 3.3 * log10(n))
 
-    minimo <- min(dati)
-    massimo <- max(dati)
+    minimo = min(dati)
+    massimo = max(dati)
 
-    if (minimo == massimo) {
-        ampiezza <- ifelse(minimo == 0, 1, abs(minimo) * 0.1)
-        minimo <- minimo - ampiezza / 2
-        massimo <- massimo + ampiezza / 2
-    }
+    ampiezza = (massimo - minimo) / k
+    limiti = minimo + 0:k * ampiezza
+    limiti_tag = limiti
 
-    ampiezza <- (massimo - minimo) / k
-    limiti <- minimo + 0:k * ampiezza
-    limiti_tag <- limiti
-    limiti[length(limiti)] <- limiti[length(limiti)] +
-        .Machine$double.eps * max(1, abs(limiti[length(limiti)]))
+    classi = cut(dati, breaks = limiti, right = FALSE, include.lowest = TRUE)
+    frequenza = as.integer(table(classi))
+    limite_sx = head(limiti_tag, -1)
+    limite_dx = tail(limiti_tag, -1)
+    frequenza_relativa = frequenza / n
 
-    classi <- cut(dati, breaks = limiti, right = FALSE, include.lowest = TRUE)
-    frequenza <- as.integer(table(classi))
-    limite_sx <- head(limiti_tag, -1)
-    limite_dx <- tail(limiti_tag, -1)
-    frequenza_relativa <- frequenza / N
-
-    data.frame(
+    tab_freq = data.frame(
         variabile = sprintf("%.2f < %s < %.2f", limite_sx, nome, limite_dx),
         classe = seq_along(frequenza),
         frequenza = frequenza,
@@ -84,19 +77,11 @@ dati_frequenze <- function(dati, nome = "x") {
         frequenza_cumulata = cumsum(frequenza),
         frequenza_relativa_cumulata = cumsum(frequenza_relativa)
     )
+
+    dati_frequenze_variabili[[nome]] <- tab_freq
 }
 
-dati_frequenze_variabili <- lapply(names(lista_variabili), function(nome) {
-    dati_frequenze(lista_variabili[[nome]], nome)
-}); dati_frequenze_variabili
-names(dati_frequenze_variabili) <- names(lista_variabili)
-
-frequenze <- do.call(rbind, dati_frequenze_variabili)
-row.names(frequenze) <- NULL
-
-frequenze_y_IQ <- dati_frequenze_variabili$y_IQ
-frequenze_y_IQ
-
+dati_frequenze_variabili
 
 png(filename = "plottwists/hists.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
 par(mfrow = c(4, 2))
@@ -162,6 +147,7 @@ png(filename = "plottwists/scatters_all_lines.png", width = 14, height = 14, uni
         col = "black", 
         cex = 0.7)
 dev.off()
+
 
 # 1.4.
 cv = cov(twist)
@@ -278,6 +264,7 @@ confint(FLAG)
 pole = residuals(FLAG)
 shapiro.test(pole)      # gotta see if it's normal
 
+install.packages("car")
 library(car)            # vrrrrrrom
 vif(FLAG)               # multicollinearità
 
@@ -323,10 +310,10 @@ plot(
     xlim = x_lim,
     ylim = c(0.5, length(parametri) + 0.5),
     axes = FALSE,
-    xlab = "Coefficiente stimato",
+    xlab = "Estimated coefficient",
     ylab = "",
     pch = 19,
-    main = "Intervalli di confidenza coefficienti parametri"
+    main = "Confidence Intervals for Parameter Estimates"
 )
 abline(v = 0, col = "gray60", lty = 2)
 segments(limite_inf, y_pos, limite_sup, y_pos)

@@ -91,7 +91,7 @@ x7_UA        0.9997     0.9995
 ```
 *deviazione standard e varianza*
 
-Notiamo che le variabili indipendenti presentano una derivazione standard prossima ad 1, ed una media prossima a 0, il che suggerisce che si possa trattare di dati standardizzati. La variabile dipendente invece è definita nel range [85.76, 181.18], per cui ne possiamo valutare il coefficiente di variazione (`sd(y_IQ) / mean(y_IQ)`), che si attesta attorno al 15%.
+Notiamo che le variabili indipendenti presentano una deviazione standard prossima ad 1, ed una media prossima a 0, il che suggerisce che si possa trattare di dati standardizzati. La variabile dipendente invece è definita nel range [85.76, 181.18], per cui ne possiamo valutare il coefficiente di variazione (`sd(y_IQ) / mean(y_IQ)`), che si attesta attorno al 15%.
 
 
 Queste informazioni possono essere analizzate in maniera efficace mediante l'utilizzo dei boxplot. Si sceglie di visualizzarne i notch e si tiene conto del fatto che il numero di osservazioni è uguale per tutte le variabili, per cui l'uso di `varwidth` è indifferente.
@@ -108,11 +108,11 @@ Si nota:
 ## 1.2. Istogrammi e Q-Q plot
 Per una sintesi visiva della distribuzione di frequenza dei valori delle caratteristiche prese in considerazione si può fare uso di istogrammi.
 Ricordando che l'informazione è di tipo quantitativo continuo, c'è la necessità di definire il numero di classi (k) in cui suddividere l'intervallo di osservazione.<br>
-Di norma si procede con la relazione empirica di Sturges (k = ceil(1 + 3.3 * log10(n))), o seguendo la norma UNI 4724-66 (secondo cui per una numerosità campionaria fino a 100 elementi si usano massimo 8 classi, 10 fino a 250), ma il comando `hist()` determina i confini in maniera che i confini risultino facile da leggere.
+Di norma si procede con la relazione empirica di Sturges ($k = \lceil1 + 3.3 \cdot \log_{10}{n}\rceil$), o seguendo la norma UNI 4724-66 (secondo cui per una numerosità campionaria fino a 100 elementi si usano massimo 8 classi, 10 fino a 250), ma il comando `hist()` determina i confini in maniera che i confini risultino facile da leggere.
 
 ![histograms](plottwists/hists.png)
 
-Non si notano somiglianze a distribuzioni particolari per la maggior parte delle variabili, meno che per y_IQ e x5_F, che nonostante alcuni rilevanti scostamenti, sono approssimabili a distribuzioni normali. 
+Non si notano somiglianze a distribuzioni particolari per la maggior parte delle variabili, meno che per y_IQ e x5_F, che nonostante alcuni rilevanti scostamenti, sono approssimabili a distribuzioni normali.
 
 Per verificare ciò è possibile analizzarne i Q-Q plots, grafici che confrontano i quantili dei dati campionari con quelli della distribuzione teorica supposta (normale: `qqnorm()`).
 
@@ -134,8 +134,6 @@ $$
 p = \mathbb{P}(T_n = W < t_n = w_{\text{oss}} \mid H_0) \space \underset{H_A}{\overset{H_0}{\gtrless}} \space \alpha = 0.05
 $$
 
-
-
 ![qq_normals](plottwists/qq_normals.png)
 
 Notiamo che nel caso di y_IQ il p-value è 0.86, ovvero dando per scontato che la popolazione sia perfettamente normale, con l'86% di probabilità c'è la possibilità di ottenere un campione meno conforme alla distribuzione normale.
@@ -145,16 +143,21 @@ Dato che il livello di significatività è 0.05, non possiamo rifiutare l'ipotes
 Ciò accade anche per la variabile x5_F, che come visualizzato sul Q-Q plot segue con buona approssimazione la retta teorica `qqline()`.
 
 
-
-
 ## 1.3. Scatter Plot
 Un altro strumento utile per visualizzare la relazione tra variabili è lo scatter plot, che rappresenta i dati come punti in un piano cartesiano. Ognuna delle variabili è rappresentata su un asse, limitandosi solitamente a due variabili per grafico.
 
-Per maggiore chiarezza visiva, abbiamo incluso due linee per ogni grafico, una rappresentante la regressione lineare (`lm(b ~ a)`) e l'altra una regressione polinomiale di secondo grado (`lm(b ~ poly(a, 2, raw = TRUE))`). In questa fase, sono utilizzate principalmente per meglio dirigere l'attenzione verso eventuali relazioni tra le variabili, che potrebbero altrimenti essere meno evidenti.
+Per maggiore chiarezza visiva, abbiamo incluso due linee per ogni grafico, una rappresentante la regressione lineare (`lm(b ~ a)`) e l'altra la regressione polinomiale di secondo grado (`lm(b ~ poly(a, 2, raw = TRUE))`). In questa fase, sono utilizzate per meglio dirigere l'attenzione verso eventuali relazioni tra le variabili, che potrebbero altrimenti essere meno evidenti. Partiamo dalla variabile dipendente y_IQ, confrontandola con le altre variabili indipendenti.
 ![scatter_y_vs_xs_lines](plottwists/scatters_y_vs_xs_lines.png)
+
+Possiamo già notare che, da un punto di vista lineare, y_IQ sembra essere negativamente correlata con x1_ISO, x2_T, x5_F e x6_GSI. Mostra poi una relazione positiva con x3_MP, e sembrerebbe non avere correlazione, se non molto debole, con x4_CF e x7_UA.
+
+Una particolarità è che da un punto di vista polinomiale, x7_UA sembra avere una relazione molto evidente con y_IQ, che non è invece visibile nella regressione lineare.
+
+Osserviamo ora la relazione tra le variabili indipendenti, altro aspetto che potrebbe essere utile per la fase di regressione multipla.
 
 ![scatter_all_lines](plottwists/scatters_all_lines.png)
 
+In questo caso, la maggior parte delle variabili sembra non avere correlazioni evidenti. L'eccezione più importante è quella di x5_F e diverse altre variabili. Linearmente, x5_F presenta una forte relazione con x3_MP e, da un punto di vista quadratico, x5_F è in relazione con x4_CF, e, in particolare, con x7_UA.
 
 - Grandi quelli con Y
 - independent twist
@@ -163,23 +166,32 @@ Per maggiore chiarezza visiva, abbiamo incluso due linee per ogni grafico, una r
 - poly regression for all graphs
 
 
-## 1.4. (covariances too) CORRELATION = CAUSATION SHIT NEEDS BETTER NAME (CONTROVERSIAL)
-
+## 1.4. Analisi di Correlazione
+Procediamo ora a valutare la correlazione tra le variabili, per ottenere informazioni più precise sulle relazioni tra le variabili.
 ![corrplot](plottwists/corrplot.png){width=80%}
 
 ![corrplot_heatmap](plottwists/corrplot_heatmap.png){width=80%}
+
+Questi grafici sembrano confermare le ipotesi fatte in precedenza. Non citroviamo in presenza di correlazioni particolarmente forti, ciononostante, si può notare che le variabili x1_ISO e x2_T sono correlate negativamente con y_IQ, in maniera moderata. Anche x5_F e x6_GSI presentano una correlazione negativa con y_IQ, ma bassa. Infine, per quanto riguarda le correlazioni con y_IQ, x3_MP presenta una bassa correlazione positiva. Tutte le altre variabili sono correlate con y_IQ in maniera trascurabile.
+
+Tra le variabili indipendenti, spicca la correlazione negativa tra x5_F e x3_MP, che avevamo già notato in precedenza, e risulta anche una correlazione negativa tra x5_F e x7_UA, e tra x6_GSI e x7_UA, che non erano state menzionate prima.
+
+In ogni caso, le correlazioni tra le variabili indipendenti menzionate sono basse, e tutte le altre risultano essere trascurabili. Ci aspettiamo quindi di vedere pochi termini multipli nella fase finale.
+
+Riportiamo infine due scatter plot visualizzati in maniera più pulita. Il primo rappresenta la relazione tra y_IQ e x1_ISO, che risulta essere la più forte tra le variabili indipendenti e la variabile dipendente. Il secondo rappresenta la relazione tra x5_F e x7_UA, che risulta essere la più forte tra le variabili indipendenti.
+
+Nonostante la correlazione tra x5_F e x7_UA sia bassa, la relazione polinomiale di secondo grado sembra essere molto evidente, e prevediamo di vedere un termine quadratico di x7_UA nella fase di regressione multipla.
 
 ![x1_ISO_vs_y_IQ](plottwists/x1_ISO_vs_y_IQ.png){width=40%} ![x5_F_vs_x7_UA](plottwists/x5_F_vs_x7_UA.png){width=40%}
 
 - cov just cause we know it by name
 - correlation (con tabella di interpretazioni)
 - comment on correlation (may integrate next entry)
-- comment on scatter plot hypotheses though comments on correlation
+- comment on scatter plot hypotheses through comments on correlation
 - may need to have to take a look at second order (gl)
 
 ## 1.A. Conclusioni
-- prediction on next steps
-- I look forward to see the evolution of the honorable mentions from the scatter plots
+Concludiamo questa prima parte del progetto con alcune considerazioni finali. Risulta
 
 
 # 2. Regression

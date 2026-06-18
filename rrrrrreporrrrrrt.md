@@ -200,6 +200,10 @@ In ogni caso, le correlazioni tra le variabili indipendenti menzionate sono bass
 
 # 2.1. Ricerca di un modello che minimizzi R²
 
+$$
+0 \underset{\text{useless}}< R^2 = \frac{SQR}{SQTOT} \underset{\text{ideal}}< 1
+$$
+
 Modelli lineari...
 
 Una prima ipotesi si può fare partendo da un modello che considera come possibili regressori tutte le variabili indipendenti in maniera lineare.

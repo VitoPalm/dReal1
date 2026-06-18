@@ -256,13 +256,7 @@ for (i in 1:4) {
                 
                 influential <- which(cook > threshold)
                 
-                text(
-                    influential,
-                    cook[influential],
-                    labels = influential,
-                    pos = 3,
-                    cex = 0.8
-                )
+                text(influential, cook[influential], labels = influential, pos = 3, cex = 0.8)
             }
         }
     dev.off()
@@ -288,12 +282,12 @@ residuals(FLAG)
 
 # 99.
 
-reg = lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA, data = twist); summary(reg)
-fff = step(lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA +
-                     I(x1_ISO^2) + I(x2_T^2) + I(x3_MP^2) + I(x4_CF^2) + I(x5_F^2) + I(x6_GSI^2) + I(x7_UA^2) +
-                     (x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA)^2,
-                     data = twist),
-                     direction = "both",
-                     trace = 1,
-                     k = log(n));
-                     summary(fff)
+reg = lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA, data = twist); print(summary(reg))
+
+# fff = step(lm(y_IQ ~ .^2 + I(x1_ISO^2) + I(x2_T^2) + I(x3_MP^2) + I(x4_CF^2) + I(x5_F^2) + I(x6_GSI^2) + I(x7_UA^2), 
+#     data = twist),
+#     direction = "both",
+#     trace = 1,
+#     k = log(n)
+# )
+# summary(fff)

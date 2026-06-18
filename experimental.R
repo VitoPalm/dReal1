@@ -23,3 +23,4 @@ ggplot(df_long, aes(x = variable, y = value)) +
     axis.text.x = element_text(angle = 45, hjust = 1),
     panel.grid.minor = element_blank()
   )
+  

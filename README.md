@@ -41,9 +41,10 @@ Notato che hanno i baffi, grandi baffi con pezzo ispirato ad iphone x
 
 
 ### la parte di statistica descrittiva 2
-
 - choose whether to use the tables
+Le usiamo, ma commentate nel rrrrrrreporrrrrrrt
 - capire definizione della statistica test usata nel test di Shapiro
+- De-functionize the function
 
 #### done?
 - Explain how you choose number of thinghies 🪣

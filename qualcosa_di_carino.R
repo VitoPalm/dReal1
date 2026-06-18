@@ -48,17 +48,12 @@ dev.off()
 
 
 # 1.2.
-dati_frequenze <- function(dati, nome = "x", k = NULL) {
+dati_frequenze <- function(dati, nome = "x") {
     dati <- dati[!is.na(dati)]
     N <- length(dati)
 
-    if (N == 0) {
-        stop("Nessun dato disponibile.")
-    }
+    k <- ceiling(1 + 3.3 * log10(N))
 
-    if (is.null(k)) {
-        k <- ceiling(1 + 3.3 * log10(N))
-    }
 
     minimo <- min(dati)
     massimo <- max(dati)
@@ -79,15 +74,11 @@ dati_frequenze <- function(dati, nome = "x", k = NULL) {
     frequenza <- as.integer(table(classi))
     limite_sx <- head(limiti_tag, -1)
     limite_dx <- tail(limiti_tag, -1)
-    centro <- (limite_sx + limite_dx) / 2
     frequenza_relativa <- frequenza / N
 
     data.frame(
-        variabile = nome,
+        variabile = sprintf("%.2f < %s < %.2f", limite_sx, nome, limite_dx),
         classe = seq_along(frequenza),
-        limite_inferiore = limite_sx,
-        limite_superiore = limite_dx,
-        centro_classe = centro,
         frequenza = frequenza,
         frequenza_relativa = frequenza_relativa,
         frequenza_cumulata = cumsum(frequenza),
@@ -97,7 +88,7 @@ dati_frequenze <- function(dati, nome = "x", k = NULL) {
 
 dati_frequenze_variabili <- lapply(names(lista_variabili), function(nome) {
     dati_frequenze(lista_variabili[[nome]], nome)
-})
+}); dati_frequenze_variabili
 names(dati_frequenze_variabili) <- names(lista_variabili)
 
 frequenze <- do.call(rbind, dati_frequenze_variabili)
@@ -199,7 +190,6 @@ dev.off()
 
 
 # 2.1.
-
 fit0 = lm(y_IQ ~ ., data=twist); summary(fit0)                                                  # R²=0.8408; x4_CF, x5_F**, x7_UA
 fit1 = lm(y_IQ ~ .-x7_UA, data=twist); summary(fit1)                                            # R²=0.8408; -x7_UA
 fit2 = lm(y_IQ ~ .-x7_UA-x4_CF, data=twist); summary(fit2)                                      # R²=0.8371; -x4_CF
@@ -266,6 +256,16 @@ for (i in 1:4) {
 AIC(fit1, fit01, fit001, fit002, fit0001, fit0002)
 BIC(fit1, fit01, fit001, fit002, fit0001, fit0002)
 
+# Tabella riassuntiva per confrontare le metriche di tutti i modelli
+confronto_modelli <- data.frame(
+  R_quadrato     = sapply(fits, function(m) summary(m)$r.squared),
+  R_quadrato_adj = sapply(fits, function(m) summary(m)$adj.r.squared),
+  AIC            = sapply(fits, AIC),
+  BIC            = sapply(fits, BIC)
+)
+print(confronto_modelli)
+
+
 FLAG = fit0002       # Fits Like A Glove
 
 png(filename = "plottwists/diagnostics_FLAG.png", width = 10, height = 10, units = "in", res = 200, bg = "white")
@@ -275,8 +275,11 @@ dev.off()
 
 confint(FLAG)
 
-residuals(FLAG)
+pole = residuals(FLAG)
+shapiro.test(pole)      # gotta see if it's normal
 
+library(car)            # vrrrrrrom
+vif(FLAG)               # multicollinearità
 
 # a small step for a man crrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr, a giant leap for mankind crrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 
@@ -284,10 +287,55 @@ residuals(FLAG)
 
 reg = lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA, data = twist); print(summary(reg))
 
-# fff = step(lm(y_IQ ~ .^2 + I(x1_ISO^2) + I(x2_T^2) + I(x3_MP^2) + I(x4_CF^2) + I(x5_F^2) + I(x6_GSI^2) + I(x7_UA^2), 
-#     data = twist),
-#     direction = "both",
-#     trace = 1,
-#     k = log(n)
-# )
-# summary(fff)
+fff = step(lm(y_IQ ~ .^2 + I(x1_ISO^2) + I(x2_T^2) + I(x3_MP^2) + I(x4_CF^2) + I(x5_F^2) + I(x6_GSI^2) + I(x7_UA^2), 
+    data = twist),
+    direction = "both",
+    trace = 1,
+    k = log(n)
+)
+summary(fff)
+
+png(filename = "plottwists/confidence_intervals.png", width = 10, height = 10, units = "in", res = 200, bg = "white")
+par(mfrow = c(1, 1))
+# INTERVALLI DI CONFIDENZA PARAMETRI MODELLO FINALE (2.5 % -> L, 97.5 % -> U)
+c0 <- coef(FLAG)
+cc <- confint(FLAG)
+
+parametri <- seq_along(c0)[-1]
+etichette_parametri <- names(c0)[parametri]
+etichette_parametri <- sub("^I\\((.*)\\)$", "\\1", etichette_parametri)
+
+stima <- c0[parametri]
+limite_inf <- cc[parametri, 1]
+limite_sup <- cc[parametri, 2]
+y_pos <- rev(seq_along(parametri))
+
+x_lim <- range(c(0, limite_inf, limite_sup))
+x_pad <- diff(x_lim) * 0.05
+if (x_pad == 0) x_pad <- 1
+x_lim <- x_lim + c(-x_pad, x_pad)
+
+old_par <- par(no.readonly = TRUE)
+par(mar = c(5, 8, 4, 2) + 0.1)
+
+plot(
+    stima, y_pos,
+    xlim = x_lim,
+    ylim = c(0.5, length(parametri) + 0.5),
+    axes = FALSE,
+    xlab = "Coefficiente stimato",
+    ylab = "",
+    pch = 19,
+    main = "Intervalli di confidenza coefficienti parametri"
+)
+abline(v = 0, col = "gray60", lty = 2)
+segments(limite_inf, y_pos, limite_sup, y_pos)
+segments(limite_inf, y_pos - 0.08, limite_inf, y_pos + 0.08)
+segments(limite_sup, y_pos - 0.08, limite_sup, y_pos + 0.08)
+points(stima, y_pos, pch = 19)
+axis(side = 1)
+axis(side = 2, at = y_pos, labels = etichette_parametri, las = 1)
+box(bty = "l")
+
+par(old_par)
+dev.off()

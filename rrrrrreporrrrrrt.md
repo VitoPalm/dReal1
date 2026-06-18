@@ -174,13 +174,13 @@ Procediamo ora a valutare la correlazione tra le variabili, per ottenere informa
 
 Basandoci sulle indicazioni presentate durante il corso, possiamo interpretare i valori di correlazione secondo la seguente tabella:
 
-| Valore di \|R\| | Interpretazione |
-| :--- | :--- |
-| \|R\| $\in$ [0.9, 1.0] | Correlazione "molto alta" |
-| \|R\| $\in$ [0.7, 0.9) | Correlazione "alta" |
-| \|R\| $\in$ [0.5, 0.7) | Correlazione "moderata" |
-| \|R\| $\in$ [0.2, 0.5) | Correlazione "bassa" |
-| \|R\| $\in$ [0, 0.2) | Correlazione "trascurabile" |
+| Valore di \|R\|        | Interpretazione             |
+| :--------------------- | :-------------------------- |
+| \|R\| $\in$ [0.9, 1.0] | Correlazione "molto alta"   |
+| \|R\| $\in$ [0.7, 0.9) | Correlazione "alta"         |
+| \|R\| $\in$ [0.5, 0.7) | Correlazione "moderata"     |
+| \|R\| $\in$ [0.2, 0.5) | Correlazione "bassa"        |
+| \|R\| $\in$ [0, 0.2)   | Correlazione "trascurabile" |
 
 Questi grafici sembrano confermare le ipotesi fatte in precedenza. Non ci troviamo in presenza di correlazioni particolarmente forti. Esplorando i legami tra y_IQ e le variabili indipendenti, si può notare che con le variabili x1_ISO e x2_T è presente una moderata correlazione negativa. Anche con x5_F e x6_GSI notiamo una correlazione negativa, ma bassa. Infine, con x3_MP c'è una bassa correlazione positiva. Tutte le altre variabili sono correlate con y_IQ in maniera trascurabile.
 
@@ -189,21 +189,23 @@ Tra le variabili indipendenti, spicca la correlazione negativa tra x5_F e x3_MP,
 In ogni caso, le correlazioni tra le variabili indipendenti menzionate sono basse, e tutte le altre risultano essere trascurabili. Ci aspettiamo quindi di vedere pochi termini multipli nella fase finale.
 
 
-# 2. Regression
-
-- lm (so fitting)
-- residuals
-- test di HP 
-    - globali
-    - individuali
+# 2. Regressione
+Nella presente sezione utilizzeremo un'altra serie di strumenti per la ricerca di una superficie di risposta, ovvero un modello, che approssimi la realtà e ci permetta di stimare i legami tra la grandezza di interesse y_IQ, e le variabili indipendenti, che prendono il nome di regressori. 
 
 
-# 2.1. Ricerca di un modello che minimizzi R²
-
+Utilizziamo come indice di "bontà" del modello il coefficiente di determinazione $R^2$:
 $$
 0 \underset{\text{useless}}< R^2 = \frac{SQR}{SQTOT} \underset{\text{ideal}}< 1
 $$
 
+Esso rappresenta rispetto alla variabilità totale quanto spiega la variabilità dovuta alla regressione.
+
+Partizione della variabilità totale in variabilità spiegata e variabilità residua:
+$$
+\overset{SQTOT}{\sum_{i=1}^{n} (Y_i - \bar{Y})^2} = \overset{SQR}{\sum_{i=1}^{n} (\hat{Y}_i - \bar{Y})^2} + \overset{SQE}{\sum_{i=1}^{n} (Y_i - \hat{Y}_i)^2}
+$$
+
+## 2.1. Analisi di Modelli Lineari
 Modelli lineari...
 
 Una prima ipotesi si può fare partendo da un modello che considera come possibili regressori tutte le variabili indipendenti in maniera lineare.
@@ -390,14 +392,14 @@ F-statistic: 18.59 on 30 and 69 DF,  p-value: < 2.2e-16
 *fit0000*
 
 
-
+## 2.2. Confronto modelli per indici
 
 
 Direttamente sul fit che scegliamo
 Determinazione degli intervalli di confidenza sui parametri trovati: al 95% ogni parametro è tra minimo e massimo dell'intervallo
 
 
-# 
+## 2.3. Diagnostica  
 
 ![diagnostics_1](plottwists/diagnostics_1.png)
 
@@ -446,9 +448,21 @@ Il valore del VIF di x5_F si allinea con i risultati dell'[analisi di correlazio
 <!-- Inaspettato -->
 
 
+## 2.4. Regressione Stepwise
+BIC 
 
 
+- lm (so fitting)
+- residuals
+- test di HP 
+    - globali
+    - individuali
+- Mettere poi in latex i modelli con i parametri trovati a numero
 
-7. Conclusioni Finali
+
+## 2.5. Intervalli di Confidenza
+
+
+# 7. Conclusioni Finali
 the journey matters more than the destination
 - discutere le variabili come se fossero cose vere

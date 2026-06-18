@@ -135,63 +135,42 @@ par(mfrow = c(4, 2))
             adj = 0.95,
             col = ifelse(p_val < 0.05, "red", "darkgreen"), 
             cex = 0.85, 
-            font = 2) 
+            font = 2)
     }
 dev.off()
 
 
-
-
-
-
-
-
 # 1.3.
+pannello_lineare_e_quadratico <- function(x, y, ...) {
+    points(x, y, ...)
+    abline(lm(y ~ x), col = "blue", lwd = 1.5)
+    seq_x <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), length.out = 100)
+    modello_quadratico <- lm(y ~ poly(x, 2, raw = TRUE))
+    predizioni_y <- predict(modello_quadratico, newdata = data.frame(x = seq_x))
+    lines(seq_x, predizioni_y, col = "red", lwd = 2, lty = "dashed")
+}
+
 png(filename = "plottwists/scatters_y_vs_xs_lines.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
 par(mfrow = c(4, 2))
     for (name in names(lista_variabili)) {
         if (name != "y_IQ") {
             data = lista_variabili[[name]]
-            
-            plot(data, y_IQ, 
-                main = '',
-                xlab = name, 
-                ylab = "y_IQ",
-                pch = 19,
-                col = "blue")
-
-            abline(lm(y_IQ ~ data), col = "red", lwd = 2)
-            seq_x <- seq(min(data, na.rm = TRUE), max(data, na.rm = TRUE), length.out = 100)
-            modello_quadratico <- lm(y_IQ ~ poly(data, 2, raw = TRUE))
-            predizioni_y <- predict(modello_quadratico, newdata = data.frame(data = seq_x))
-            lines(seq_x, predizioni_y, col = "darkblue", lwd = 3, lty = 3)
+            plot(data, y_IQ, main='', xlab=name, ylab="y_IQ", type="n")
+            pannello_lineare_e_quadratico(data, y_IQ, pch=1, col="black")
         }
 }
 dev.off()
 
 independent_twist = twist
 independent_twist$y_IQ = NULL
-png(filename = "plottwists/scatters_xs.png", width = 14, height = 14, units = "in", res = 200, bg = "white")
-    plot(independent_twist)
-dev.off()
 
 png(filename = "plottwists/scatters_all_lines.png", width = 14, height = 14, units = "in", res = 200, bg = "white")
-    pannello_lineare_e_quadratico <- function(x, y, ...) {
-        points(x, y, ...)
-        abline(lm(y ~ x), col = "blue", lwd = 1.5)
-        seq_x <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), length.out = 100)
-        modello_quadratico <- lm(y ~ poly(x, 2, raw = TRUE))
-        predizioni_y <- predict(modello_quadratico, newdata = data.frame(x = seq_x))
-        lines(seq_x, predizioni_y, col = "red", lwd = 2, lty = "dashed")
-    }
-
-    pairs(twist, 
+    pairs(independent_twist, 
         panel = pannello_lineare_e_quadratico, 
         pch = 1, 
         col = "black", 
         cex = 0.7)
 dev.off()
-
 
 # 1.4.
 cv = cov(twist)
@@ -293,7 +272,7 @@ for (i in 1:4) {
 AIC(fit1, fit01, fit001, fit002, fit0001, fit0002)
 BIC(fit1, fit01, fit001, fit002, fit0001, fit0002)
 
-FLAG = fit0002       # Fits Like A Glove (by the Anti-Gaeta League)
+FLAG = fit0002       # Fits Like A Glove
 
 png(filename = "plottwists/diagnostics_FLAG.png", width = 10, height = 10, units = "in", res = 200, bg = "white")
 par(mfrow = c(2, 2))
@@ -306,8 +285,6 @@ residuals(FLAG)
 
 
 # a small step for a man crrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr, a giant leap for mankind crrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-
-
 
 # 99.
 

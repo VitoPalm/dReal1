@@ -107,7 +107,7 @@ Si nota:
 
 ## 1.2. Istogrammi e Q-Q plot
 Per una sintesi visiva della distribuzione di frequenza dei valori delle caratteristiche prese in considerazione si può fare uso di istogrammi.
-Ricordando che l'informazione è di tipo quantitativo continuo, c'è la necessità di definire il numero di classi (k) in cui suddividere l'intervallo di osservazione. 
+Ricordando che l'informazione è di tipo quantitativo continuo, c'è la necessità di definire il numero di classi (k) in cui suddividere l'intervallo di osservazione.<br>
 Di norma si procede con la relazione empirica di Sturges (k = ceil(1 + 3.3 * log10(n))), o seguendo la norma UNI 4724-66 (secondo cui per una numerosità campionaria fino a 100 elementi si usano massimo 8 classi, 10 fino a 250), ma il comando `hist()` determina i confini in maniera che i confini risultino facile da leggere.
 
 ![histograms](plottwists/hists.png)
@@ -138,20 +138,20 @@ $$
 
 ![qq_normals](plottwists/qq_normals.png)
 
-Notiamo che nel caso di y_IQ il p-value è 0.86, ovvero dando per scontato che la popolazione sia perfettamente normale, con l'86% di probabilità c'è la possibilità di ottenere un campione meno conforme alla distribuzione normale. 
+Notiamo che nel caso di y_IQ il p-value è 0.86, ovvero dando per scontato che la popolazione sia perfettamente normale, con l'86% di probabilità c'è la possibilità di ottenere un campione meno conforme alla distribuzione normale.
 
 Dato che il livello di significatività è 0.05, non possiamo rifiutare l'ipotesi nulla, di conseguenza possiamo assumere che i dati provengano da una distribuzione normale.
 
-Ciò accade anche per la variabile x5_F, che come visualizzato sul Q-Q plot segue con buona approssimazione la retta teorica `qqline()`. 
+Ciò accade anche per la variabile x5_F, che come visualizzato sul Q-Q plot segue con buona approssimazione la retta teorica `qqline()`.
 
 
 
 
 ## 1.3. Scatter Plot
+Un altro strumento utile per visualizzare la relazione tra variabili è lo scatter plot, che rappresenta i dati come punti in un piano cartesiano. Ognuna delle variabili è rappresentata su un asse, limitandosi solitamente a due variabili per grafico.
 
+Per maggiore chiarezza visiva, abbiamo incluso due linee per ogni grafico, una rappresentante la regressione lineare (`lm(b ~ a)`) e l'altra una regressione polinomiale di secondo grado (`lm(b ~ poly(a, 2, raw = TRUE))`). In questa fase, sono utilizzate principalmente per meglio dirigere l'attenzione verso eventuali relazioni tra le variabili, che potrebbero altrimenti essere meno evidenti.
 ![scatter_y_vs_xs_lines](plottwists/scatters_y_vs_xs_lines.png)
-
-![scatter_xs](plottwists/scatters_xs.png)
 
 ![scatter_all_lines](plottwists/scatters_all_lines.png)
 

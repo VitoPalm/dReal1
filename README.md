@@ -1,22 +1,34 @@
 # dReal1
-R, cause as they say, rrrr, r, rrrrrrr, rr, r. And don't forget, keep on rrrrrr!
+**R, cause as they say, rrrr, r, rrrrrrr, rr, r. And don't forget, keep on rrrrrr!**
 
 ## 🪣 List
-- Started looking at regression, it's bleak.
 - Perché controllano la regressione singola su tutto l'universo
-
+Per fare i grafici
 
 - Perché controllano la regressione multipla su tutto l'universo
+bro.. tf..? were you smoking or smth? or r we now?
+
 - Come controlliamo l'overfitting?
-
 Lo fa lui, BIC AIC
+
 - Come scegliamo il modello da cui partire per muoverci verso il modello finale
+In maniera occhiometrica con la roba diagnostica che in realtà non capiamo (a parte qq)
+
 - Modello che predicta y in base alle tante x, why (ig how is more important but who cares)
+huh?
+
+
+
+
+
+
+
+
+
+
 - ![alt text](image.png)
+- Potremmo fare una cosa del genere dividendo il modello finale in contributi da parte di singoli regressori
 - I want you ↑
-
-
-sposto qua il todo
 
 <!-- TODO: does this work? -->
 
@@ -24,11 +36,8 @@ sposto qua il todo
 
 #### done?
 - Comment the data
-- indici di tendenza centrale: media, mediana (boh mostra i dati)
-- indici di dispersione: varianza (e il cugino), escursione campionaria (range)
-- Consider doing fancy shit for labels
-- Notiamo che non ci sono outliers?
 - Other noticeable thinghies (hanno i baffi)
+Notato che hanno i baffi, grandi baffi con pezzo ispirato ad iphone x
 
 
 ### la parte di statistica descrittiva 2

@@ -32,14 +32,19 @@ for(nome in names(lista_variabili)) {
 var_coeff_y = sd(y_IQ) / mean(y_IQ) * 100; var_coeff_y  # around 15%
 
 # Old timey person (or catto)
-boxplot(y_IQ, notch=T, main = "Boxplot of y_IQ", ylab = "Value", xlab = "Dependent variable")
-boxplot(x1_ISO, x2_T, x3_MP, x4_CF, x5_F, x6_GSI, x7_UA,
-        notch = TRUE,
-        xlab = 'Independent variable',
-        ylab = 'Value',
-        main = 'Boxplots of Xs',
-        names = c("x1_ISO", "x2_T", "x3_MP", "x4_CF", "x5_F", "x6_GSI", "x7_UA")
-)
+png(filename = "plottwists/boxplot_y.png", width = 4, height = 6, units = "in", res = 300, bg = "white")
+    boxplot(y_IQ, notch=T, main = "Boxplot of y_IQ", ylab = "Value", xlab = "Dependent variable")
+dev.off()
+
+png(filename = "plottwists/boxplots_xs.png", width = 8, height = 6, units = "in", res = 250, bg = "white")
+    boxplot(x1_ISO, x2_T, x3_MP, x4_CF, x5_F, x6_GSI, x7_UA,
+            notch = TRUE,
+            xlab = 'Independent variable',
+            ylab = 'Value',
+            main = 'Boxplots of Xs',
+            names = c("x1_ISO", "x2_T", "x3_MP", "x4_CF", "x5_F", "x6_GSI", "x7_UA")
+    )
+dev.off()
 
 
 # 1.2.
@@ -103,7 +108,7 @@ frequenze_y_IQ
 
 
 png(filename = "plottwists/hists.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
-    par(mfrow = c(4, 2))
+par(mfrow = c(4, 2))
     for(nome in names(lista_variabili)) {
         dati = lista_variabili[[nome]]
 
@@ -113,7 +118,7 @@ dev.off()
 
 
 png(filename = "plottwists/qq_normals.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
-    par(mfrow = c(4, 2))
+par(mfrow = c(4, 2))
     for(nome in names(lista_variabili)) {
     
     dati <- lista_variabili[[nome]]
@@ -143,7 +148,7 @@ dev.off()
 
 # 1.3.
 png(filename = "plottwists/scatters_y_vs_xs_lines.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
-    par(mfrow = c(4, 2))
+par(mfrow = c(4, 2))
     for (name in names(lista_variabili)) {
         if (name != "y_IQ") {
             data = lista_variabili[[name]]
@@ -247,51 +252,53 @@ fits <- list(
 
 
 for (i in 1:4) {
-    png(filename = sprintf("plottwists/diagnostics_%d.png", i), width = 12, height = 16, units = "in", res = 300, bg = "white")
+    png(filename = sprintf("plottwists/diagnostics_%d.png", i), width = 8, height = 12, units = "in", res = 200, bg = "white")
     par(mfrow = c(3, 2))
-    for (name in names(fits)) {
-        fit <- fits[[name]]
-    
-        if (i < 4) {
-            plot(fit, which = i, main = name)
-      
-        } else {
-            cook <- cooks.distance(fit)
-            threshold <- 4 / nobs(fit)
-            
-            plot(
-                cook,
-                type = "h",
-                main = name,
-                ylim = c(0, 0.13),
-                xlab = "Obs. number",
-                ylab = "Cook's distance"
-            )
-            
-            abline(h = threshold, col = "red", lty = 2)       # Seizing the means of production
-            
-            influential <- which(cook > threshold)
-            
-            text(
-                influential,
-                cook[influential],
-                labels = influential,
-                pos = 3,
-                cex = 0.8
-            )
+        for (name in names(fits)) {
+            fit <- fits[[name]]
+        
+            if (i < 4) {
+                plot(fit, which = i, main = name)
+        
+            } else {
+                cook <- cooks.distance(fit)
+                threshold <- 4 / nobs(fit)
+                
+                plot(
+                    cook,
+                    type = "h",
+                    main = name,
+                    ylim = c(0, 0.13),
+                    xlab = "Obs. number",
+                    ylab = "Cook's distance"
+                )
+                
+                abline(h = threshold, col = "red", lty = 2)       # Seizing the means of production
+                
+                influential <- which(cook > threshold)
+                
+                text(
+                    influential,
+                    cook[influential],
+                    labels = influential,
+                    pos = 3,
+                    cex = 0.8
+                )
+            }
         }
-  }
     dev.off()
 }
 
-par(mfrow = c(1, 1))
 
 AIC(fit1, fit01, fit001, fit002, fit0001, fit0002)
 BIC(fit1, fit01, fit001, fit002, fit0001, fit0002)
 
 FLAG = fit0002       # Fits Like A Glove (by the Anti-Gaeta League)
 
-plot(FLAG)
+png(filename = "plottwists/diagnostics_FLAG.png", width = 10, height = 10, units = "in", res = 200, bg = "white")
+par(mfrow = c(2, 2))
+    plot(FLAG)
+dev.off()
 
 confint(FLAG)
 

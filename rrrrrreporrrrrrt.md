@@ -98,8 +98,7 @@ Queste informazioni possono essere analizzate in maniera efficace mediante l'uti
 
 
 <!-- *whisker plots start appearing* -->
-![alt text](plottwists/boxplot_y.png)
-![alt text](plottwists/boxplot_xs.png)
+![alt text](plottwists/boxplot_y.png){width=40%} ![alt text](plottwists/boxplots_xs.png)
 
 Si nota:
 - l'assenza di outliers prima di Q1 - 1.5\*IQR e oltre Q3 + 1.5\*IQR per tutte le variabili considerate, con influenza sulla lunghezza dei baffi 
@@ -200,6 +199,14 @@ Determinazione degli intervalli di confidenza sui parametri trovati: al 95% ogni
 
 # 
 
+![diagnostics_1](plottwists/diagnostics_1.png)
+
+![diagnostics_2](plottwists/diagnostics_2.png)
+
+![diagnostics_3](plottwists/diagnostics_3.png)
+
+![diagnostics_4](plottwists/diagnostics_4.png)
+
 In maniera occhiometrica, il più carino per ogni categoria diagnostica
 - Residuals vs Fitted -> fit002 (Runner up: fit0002)
 - Q-Q Plots: fit0002 (Runner up: fit0001)
@@ -209,6 +216,7 @@ In maniera occhiometrica, il più carino per ogni categoria diagnostica
 
 
 
+![diagnostics_FLAG](plottwists/diagnostics_FLAG.png)
 
 
 
@@ -217,6 +225,5 @@ In maniera occhiometrica, il più carino per ogni categoria diagnostica
 
 
 
-
-7. Conclusioni Finali
+1. Conclusioni Finali
 the journey matters more than the destination

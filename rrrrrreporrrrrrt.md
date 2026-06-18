@@ -146,55 +146,51 @@ Ciò accade anche per la variabile x5_F, che come visualizzato sul Q-Q plot segu
 ## 1.3. Scatter Plot
 Un altro strumento utile per visualizzare la relazione tra variabili è lo scatter plot, che rappresenta i dati come punti in un piano cartesiano. Ognuna delle variabili è rappresentata su un asse, limitandosi solitamente a due variabili per grafico.
 
-Per maggiore chiarezza visiva, abbiamo incluso due linee per ogni grafico, una rappresentante la regressione lineare (`lm(b ~ a)`) e l'altra la regressione polinomiale di secondo grado (`lm(b ~ poly(a, 2, raw = TRUE))`). In questa fase, sono utilizzate per meglio dirigere l'attenzione verso eventuali relazioni tra le variabili, che potrebbero altrimenti essere meno evidenti. Partiamo dalla variabile dipendente y_IQ, confrontandola con le altre variabili indipendenti.
+Per maggiore chiarezza visiva, abbiamo incluso due linee per ogni grafico, una rappresenta la regressione semplice (`lm(b ~ a)`) e l'altra la regressione polinomiale di secondo grado (`lm(b ~ poly(a, 2, raw = TRUE))`). In questa fase, sono utilizzate per meglio dirigere l'attenzione verso eventuali relazioni tra le variabili, che potrebbero altrimenti essere meno evidenti.
+
+Partiamo dalla variabile dipendente y_IQ, confrontandola con le variabili indipendenti.
 ![scatter_y_vs_xs_lines](plottwists/scatters_y_vs_xs_lines.png)
 
 Possiamo già notare che, da un punto di vista lineare, y_IQ sembra essere negativamente correlata con x1_ISO, x2_T, x5_F e x6_GSI. Mostra poi una relazione positiva con x3_MP, e sembrerebbe non avere correlazione, se non molto debole, con x4_CF e x7_UA.
 
-Una particolarità è che da un punto di vista polinomiale, x7_UA sembra avere una relazione molto evidente con y_IQ, che non è invece visibile nella regressione lineare.
+Una particolarità è che x7_UA sembra avere una relazione quadratica molto evidente con y_IQ, che non è invece visibile nella regressione lineare.
 
-Osserviamo ora la relazione tra le variabili indipendenti, altro aspetto che potrebbe essere utile per la fase di regressione multipla.
+Osserviamo ora la relazione tra le variabili indipendenti.
 
 ![scatter_all_lines](plottwists/scatters_all_lines.png)
 
-In questo caso, la maggior parte delle variabili sembra non avere correlazioni evidenti. L'eccezione più importante è quella di x5_F e diverse altre variabili. Linearmente, x5_F presenta una forte relazione con x3_MP e, da un punto di vista quadratico, x5_F è in relazione con x4_CF, e, in particolare, con x7_UA.
+In questo caso, la maggior parte delle variabili non sembra avere correlazioni evidenti. L'eccezione più importante è quella di x5_F e diverse altre variabili. Linearmente, x5_F presenta una forte relazione con x3_MP e, da un punto di vista quadratico, è in relazione con x4_CF, e, in particolare, con x7_UA.
 
-- Grandi quelli con Y
-- independent twist
-- honorable mentions
-- ipotesi su why forme all throughout
-- poly regression for all graphs
+Vorremmo riportare con più enfasi la relazione tra x5_F e x7_UA, che mostra un chiaro caso in cui l'assenza di correlazione non implica l'assenza di relazione tra le variabili. In questo caso, la relazione è chiaramente quadratica.
+
+![x7_UA_vs_x5_F](plottwists/x7_UA_vs_x5_F.png){width=40%}
 
 
 ## 1.4. Analisi di Correlazione
-Procediamo ora a valutare la correlazione tra le variabili, per ottenere informazioni più precise sulle relazioni tra le variabili.
+Procediamo ora a valutare la correlazione tra le variabili, per ottenere informazioni più precise sulle relazioni tra di esse.
 ![corrplot](plottwists/corrplot.png){width=80%}
 
 ![corrplot_heatmap](plottwists/corrplot_heatmap.png){width=80%}
 
-Questi grafici sembrano confermare le ipotesi fatte in precedenza. Non citroviamo in presenza di correlazioni particolarmente forti, ciononostante, si può notare che le variabili x1_ISO e x2_T sono correlate negativamente con y_IQ, in maniera moderata. Anche x5_F e x6_GSI presentano una correlazione negativa con y_IQ, ma bassa. Infine, per quanto riguarda le correlazioni con y_IQ, x3_MP presenta una bassa correlazione positiva. Tutte le altre variabili sono correlate con y_IQ in maniera trascurabile.
+Basandoci sulle indicazioni presentate durante il corso, possiamo interpretare i valori di correlazione secondo la seguente tabella:
 
-Tra le variabili indipendenti, spicca la correlazione negativa tra x5_F e x3_MP, che avevamo già notato in precedenza, e risulta anche una correlazione negativa tra x5_F e x7_UA, e tra x6_GSI e x7_UA, che non erano state menzionate prima.
+| Valore di \|R\| | Interpretazione |
+| :--- | :--- |
+| \|R\| $\in$ [0.9, 1.0] | Correlazione "molto alta" |
+| \|R\| $\in$ [0.7, 0.9) | Correlazione "alta" |
+| \|R\| $\in$ [0.5, 0.7) | Correlazione "moderata" |
+| \|R\| $\in$ [0.2, 0.5) | Correlazione "bassa" |
+| \|R\| $\in$ [0, 0.2) | Correlazione "trascurabile" |
+
+Questi grafici sembrano confermare le ipotesi fatte in precedenza. Non ci troviamo in presenza di correlazioni particolarmente forti. Esplorando i legami tra y_IQ e le variabili indipendenti, si può notare che con le variabili x1_ISO e x2_T è presente una moderata correlazione negativa. Anche con x5_F e x6_GSI notiamo una correlazione negativa, ma bassa. Infine, con x3_MP c'è una bassa correlazione positiva. Tutte le altre variabili sono correlate con y_IQ in maniera trascurabile.
+
+Tra le variabili indipendenti, spicca la correlazione negativa tra x5_F e x3_MP, che avevamo già notato in precedenza, e risulta presente anche una correlazione negativa tra x5_F e x7_UA (oltre alla loro relazione polinomiale), e tra x6_GSI e x7_UA, che non erano state menzionate prima.
 
 In ogni caso, le correlazioni tra le variabili indipendenti menzionate sono basse, e tutte le altre risultano essere trascurabili. Ci aspettiamo quindi di vedere pochi termini multipli nella fase finale.
 
-Riportiamo infine due scatter plot visualizzati in maniera più pulita. Il primo rappresenta la relazione tra y_IQ e x1_ISO, che risulta essere la più forte tra le variabili indipendenti e la variabile dipendente. Il secondo rappresenta la relazione tra x5_F e x7_UA, che risulta essere la più forte tra le variabili indipendenti.
-
-Nonostante la correlazione tra x5_F e x7_UA sia bassa, la relazione polinomiale di secondo grado sembra essere molto evidente, e prevediamo di vedere un termine quadratico di x7_UA nella fase di regressione multipla.
-
-![x1_ISO_vs_y_IQ](plottwists/x1_ISO_vs_y_IQ.png){width=40%} ![x5_F_vs_x7_UA](plottwists/x5_F_vs_x7_UA.png){width=40%}
-
-- cov just cause we know it by name
-- correlation (con tabella di interpretazioni)
-- comment on correlation (may integrate next entry)
-- comment on scatter plot hypotheses through comments on correlation
-- may need to have to take a look at second order (gl)
-
-## 1.A. Conclusioni
-Concludiamo questa prima parte del progetto con alcune considerazioni finali. Risulta
-
 
 # 2. Regression
+
 - lm (so fitting)
 - residuals
 - test di HP 
@@ -503,3 +499,4 @@ In maniera occhiometrica, il più carino per ogni categoria diagnostica
 
 7. Conclusioni Finali
 the journey matters more than the destination
+- discutere le variabili come se fossero cose vere

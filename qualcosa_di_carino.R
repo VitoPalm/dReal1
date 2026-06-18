@@ -148,6 +148,16 @@ png(filename = "plottwists/scatters_all_lines.png", width = 14, height = 14, uni
         cex = 0.7)
 dev.off()
 
+png(filename = "plottwists/x1_ISO_vs_y_IQ.png", width = 4, height = 4, units = "in", res = 400, bg = "white")
+    plot(x1_ISO, y_IQ, type="n")
+    pannello_lineare_e_quadratico(x1_ISO, y_IQ, pch=1, col="black")
+dev.off()
+
+png(filename = "plottwists/x7_UA_vs_x5_F.png", width = 4, height = 4, units = "in", res = 400, bg = "white")
+    plot(x7_UA, x5_F, type="n")
+    pannello_lineare_e_quadratico(x7_UA, x5_F, pch=1, col="black")
+dev.off()
+
 
 # 1.4.
 cv = cov(twist)
@@ -162,15 +172,6 @@ png(filename = "plottwists/corrplot_heatmap.png", width = 10, height = 10, units
     corPlot(cr, cex = 1.1, show.legend=TRUE, main="Correlation plot")
 dev.off()
 
-
-
-png(filename = "plottwists/x1_ISO_vs_y_IQ.png", width = 4, height = 4, units = "in", res = 400, bg = "white")
-    plot(x1_ISO, y_IQ)
-dev.off()
-
-png(filename = "plottwists/x5_F_vs_x7_UA.png", width = 4, height = 4, units = "in", res = 400, bg = "white")
-    plot(x5_F, x7_UA)
-dev.off()
 
 
 
@@ -264,7 +265,6 @@ confint(FLAG)
 pole = residuals(FLAG)
 shapiro.test(pole)      # gotta see if it's normal
 
-install.packages("car")
 library(car)            # vrrrrrrom
 vif(FLAG)               # multicollinearità
 

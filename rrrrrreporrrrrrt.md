@@ -191,16 +191,22 @@ In ogni caso, le correlazioni tra le variabili indipendenti menzionate sono bass
 
 # 2. Regressione
 Nella presente sezione utilizzeremo un'altra serie di strumenti per la ricerca di una superficie di risposta, ovvero un modello che approssimi la realtà e ci permetta di stimare i legami tra la grandezza di interesse y_IQ, e le variabili indipendenti, che prendono il nome di regressori.
+Nella presente sezione utilizzeremo un'altra serie di strumenti per la ricerca di una superficie di risposta, ovvero un modello che approssimi la realtà e ci permetta di stimare i legami tra la grandezza di interesse y_IQ, e le variabili indipendenti, che prendono il nome di regressori.
 
 Uno degli indici di "bontà" del modello è il coefficiente di determinazione $R^2$:
+Uno degli indici di "bontà" del modello è il coefficiente di determinazione $R^2$:
 $$
+0 \underset{\text{useless}}{\le} R^2 = \frac{SQR}{SQTOT} \underset{\text{ideal}}{\le} 1
 0 \underset{\text{useless}}{\le} R^2 = \frac{SQR}{SQTOT} \underset{\text{ideal}}{\le} 1
 $$
 
 Esso misura la quota della variabilità totale ($SQTOT$) di y_IQ spiegata dal modello di regressione ($SQR$), dove:
+Esso misura la quota della variabilità totale ($SQTOT$) di y_IQ spiegata dal modello di regressione ($SQR$), dove:
 $$
 \overset{SQTOT}{\sum_{i=1}^{n} (Y_i - \bar{Y})^2} = \overset{SQR}{\sum_{i=1}^{n} (\hat{Y}_i - \bar{Y})^2} + \overset{SQE}{\sum_{i=1}^{n} (Y_i - \hat{Y}_i)^2}
 $$
+
+In questa formula, detta *Teorema di decomposizione della devianza*, $Y$ rappresenta i valori osservati di y_IQ, $\hat{Y}$ rappresenta i valori stimati dal modello, e $\bar{Y}$ rappresenta la media dei valori osservati di y_IQ.
 
 In questa formula, detta *Teorema di decomposizione della devianza*, $Y$ rappresenta i valori osservati di y_IQ, $\hat{Y}$ rappresenta i valori stimati dal modello, e $\bar{Y}$ rappresenta la media dei valori osservati di y_IQ.
 

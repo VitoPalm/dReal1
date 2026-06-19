@@ -230,7 +230,7 @@ confronto_modelli = data.frame(
     RSS            = sapply(a_fist_full_of_fits, function(m) deviance(m)),
     R2             = sapply(a_fist_full_of_fits, function(m) summary(m)$r.squared),
     R2a            = sapply(a_fist_full_of_fits, function(m) summary(m)$adj.r.squared),
-    Fvalue         = sapply(a_fist_full_of_fits, function(m) summary(m)$fstatistic["F value"]),
+    Fstat          = sapply(a_fist_full_of_fits, function(m) summary(m)$fstatistic["value"]),    
     AIC            = sapply(a_fist_full_of_fits, function(m) AIC(m)),
     BIC            = sapply(a_fist_full_of_fits, function(m) BIC(m))
 )

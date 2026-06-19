@@ -5,7 +5,7 @@ Questo progetto si svolge nel più ampio contesto del corso di Statistica Applic
 
 Ci è stato fornito un dataset rappresentativo di un campione dei quali elementi consideriamo 8 caratteristiche, una di queste è espressa come dipendente dalle altre.
 
-L'obbiettivo di questa attività è quello di svolgere un'analisi statistica descrittiva sui dati forniti, per poi procedere con una fase di regressione lineare multipla, al fine di identificare un modello che possa spiegare al meglio la variabilità della variabile dipendente in funzione delle altre caratteristiche.
+L'obiettivo di questa attività è quello di svolgere un'analisi statistica descrittiva sui dati forniti, per poi procedere con una fase di regressione lineare multipla, al fine di identificare un modello che possa spiegare al meglio la variabilità della variabile dipendente in funzione delle altre caratteristiche.
 
 Al termine dell'attività potremo fornire a un ipotetico operatore le conoscenze necessarie per ottimizzare la procedura di acquisizioni di immagini da UAV.
 
@@ -17,7 +17,6 @@ Il campione in analisi è costituito da 100 (`n = nrow(ds)`) elementi di cui son
 Per avere un'idea limitata ma immediata della natura dei dati, abbiamo visualizzato i valori iniziali e finali del campione, ordinati secondo la variabile dipendente `y_IQ`.
 
 ```R console
-> head(twist_sorted)
       y_IQ      x1_ISO       x2_T       x3_MP
   85.76275  1.71051927  1.2694487 -1.60960262
   89.37733  0.47531620  1.6607291  0.01548673
@@ -32,8 +31,10 @@ Per avere un'idea limitata ma immediata della natura dei dati, abbiamo visualizz
  0.7965453  0.03008541 -0.6582414  -0.7980054
  1.2178391  0.46207915  0.7841440  -1.1420552
 -0.1788123  1.62989182  0.4556526   1.4947013
+```
+*head(twist_sorted)*
 
-> tail(twist_sorted)
+```R console
       y_IQ     x1_ISO        x2_T      x3_MP 
   166.9723  0.1009377 -0.09395068  1.2803254 
   168.0356 -0.2722747  0.58255508 -0.3704142 
@@ -49,8 +50,9 @@ Per avere un'idea limitata ma immediata della natura dei dati, abbiamo visualizz
  0.7842828 -0.8365009 -0.2303526  0.29413924
  1.3692702 -0.7514527 -1.0163686 -0.88874785
 ```
+*tail(twist_sorted)*
 
-## 1.1. Summary & Whiskerrrrrrs
+## 1.1. Summary & Whiskers
 Prima di tutto valutiamo gli indici di tendenza centrale (media e mediana) e di dispersione (deviazione standard) per tutte le caratteristiche del dataset.
 
 ```R console
@@ -108,7 +110,7 @@ Si nota:
 ## 1.2. Istogrammi e Q-Q plot
 Per una sintesi visiva della distribuzione di frequenza dei valori delle caratteristiche prese in considerazione si può fare uso di istogrammi.
 Ricordando che l'informazione è di tipo quantitativo continuo, c'è la necessità di definire il numero di classi (k) in cui suddividere l'intervallo di osservazione.<br>
-Di norma si procede con la relazione empirica di Sturges ($k = \lceil1 + 3.3 \cdot \log_{10}{n}\rceil$), o seguendo la norma UNI 4724-66 (secondo cui per una numerosità campionaria fino a 100 elementi si usano massimo 8 classi, 10 fino a 250), ma il comando `hist()` determina i confini in maniera che i confini risultino facile da leggere.
+Di norma si procede con la relazione empirica di Sturges ($k = \lceil1 + 3.3 \cdot \log_{10}{n}\rceil$), o seguendo la norma UNI 4724-66 (secondo cui per una numerosità campionaria fino a 100 elementi si usano massimo 8 classi, 10 fino a 250), ma il comando `hist()` determina i confini in maniera che risultino facili da leggere.
 
 ![histograms](plottwists/hists.png)
 
@@ -129,7 +131,7 @@ $$
 0 \underset{H_A}{\le} W = \frac{\left(\sum_{i=1}^n a_i x_{(i)}\right)^2}{\sum_{i=1}^n (x_i - \bar{x})^2} \underset{H_0}{\le} 1
 $$
 
-Scegliendo un livello di confidenza 1-α = 0.95, il criterio di scelta è:
+Scegliendo un livello di significatività $\alpha = 0.05$ (equivalentemente un livello di confidenza $1-\alpha = 0.95$), il criterio di scelta è:
 $$
 p = \mathbb{P}(T_n = W < t_n = w_{\text{oss}} \mid H_0) \space \underset{H_A}{\overset{H_0}{\gtrless}} \space \alpha = 0.05
 $$
@@ -191,22 +193,16 @@ In ogni caso, le correlazioni tra le variabili indipendenti menzionate sono bass
 
 # 2. Regressione
 Nella presente sezione utilizzeremo un'altra serie di strumenti per la ricerca di una superficie di risposta, ovvero un modello che approssimi la realtà e ci permetta di stimare i legami tra la grandezza di interesse y_IQ, e le variabili indipendenti, che prendono il nome di regressori.
-Nella presente sezione utilizzeremo un'altra serie di strumenti per la ricerca di una superficie di risposta, ovvero un modello che approssimi la realtà e ci permetta di stimare i legami tra la grandezza di interesse y_IQ, e le variabili indipendenti, che prendono il nome di regressori.
 
-Uno degli indici di "bontà" del modello è il coefficiente di determinazione $R^2$:
 Uno degli indici di "bontà" del modello è il coefficiente di determinazione $R^2$:
 $$
 0 \underset{\text{useless}}{\le} R^2 = \frac{SQR}{SQTOT} \underset{\text{ideal}}{\le} 1
-0 \underset{\text{useless}}{\le} R^2 = \frac{SQR}{SQTOT} \underset{\text{ideal}}{\le} 1
 $$
 
-Esso misura la quota della variabilità totale ($SQTOT$) di y_IQ spiegata dal modello di regressione ($SQR$), dove:
 Esso misura la quota della variabilità totale ($SQTOT$) di y_IQ spiegata dal modello di regressione ($SQR$), dove:
 $$
 \overset{SQTOT}{\sum_{i=1}^{n} (Y_i - \bar{Y})^2} = \overset{SQR}{\sum_{i=1}^{n} (\hat{Y}_i - \bar{Y})^2} + \overset{SQE}{\sum_{i=1}^{n} (Y_i - \hat{Y}_i)^2}
 $$
-
-In questa formula, detta *Teorema di decomposizione della devianza*, $Y$ rappresenta i valori osservati di y_IQ, $\hat{Y}$ rappresenta i valori stimati dal modello, e $\bar{Y}$ rappresenta la media dei valori osservati di y_IQ.
 
 In questa formula, detta *Teorema di decomposizione della devianza*, $Y$ rappresenta i valori osservati di y_IQ, $\hat{Y}$ rappresenta i valori stimati dal modello, e $\bar{Y}$ rappresenta la media dei valori osservati di y_IQ.
 
@@ -314,7 +310,7 @@ F-statistic: 15.44 on 28 and 71 DF,  p-value: < 2.2e-16
 ```
 *fit00*
 
-Per `fit00` il valore dell'F-statistic è notevolmente inferiore rispetto ai modelli precedenti, mentre il coefficiente di determinazione $R^2$ cresce marginalmente ($+1.8\%$). Per il test t, quasi tutti i regressori sembrano non essere significativi, e vengono quindi rimossi, mantenendo x3_MP:x4_CF x5_F nonostante il loro p-value relativamente elevato.
+Per `fit00` il valore dell'F-statistic è notevolmente inferiore rispetto ai modelli precedenti, mentre il coefficiente di determinazione $R^2$ cresce marginalmente ($+1.8\%$). Per il test t, quasi tutti i regressori sembrano non essere significativi, e vengono quindi rimossi, mantenendo `x3_MP:x4_CF` e `x5_F` nonostante il loro p-value relativamente elevato.
 
 Tale rimozione porta x5_F ad assumere una maggiore importanza (p-value da 0.074 a 0.0015), e porta a una notevole crescita dell'F-statistic e ad una marginale riduzione del valore di $R^2$.
 
@@ -425,7 +421,7 @@ F-statistic: 18.59 on 30 and 69 DF,  p-value: < 2.2e-16
 ```
 *fit0000*
 
-Il modello `fit0000` ottiene l'$R^2$ più alto tra quelli riportati con un valore di 0.8899. Per riguarda l'F-statistic, notiamo un lieve miglioramento rispetto a `fit000`. Sembrerebbe inoltre che il termine quadratico `I(x2_T^2)` sia molto significativo, mentre `I(x7_UA^2)` mantiene un livello simile a quello di `fit000`.
+Il modello `fit0000` ottiene l'$R^2$ più alto tra quelli riportati con un valore di 0.8899. Per quanto riguarda l'F-statistic, notiamo un lieve miglioramento rispetto a `fit000`. Sembrerebbe inoltre che il termine quadratico `I(x2_T^2)` sia molto significativo, mentre `I(x7_UA^2)` mantiene un livello simile a quello di `fit000`.
 
 Rimuovendo ancora una volta i termini trascurabili arriviamo al modello `fit0002`:
 
@@ -480,7 +476,6 @@ $$
 dove $L$ è verosimiglianza nel massimo, $d$ è il numero di parametri stimati e $n$ è il numero di osservazioni.
 
 ```R console
-r$> print(confronto_modelli)
              SQE        R2       R2a     Fstat      AIC      BIC
 fit0        6556    0.8408    0.8287     69.43    720.1    743.5
 fit1        6557    0.8408    0.8306     81.87    718.1    738.9
@@ -501,7 +496,7 @@ Per quanto riguarda l'$R^2$, il modello `fit0000` presenta il valore più alto, 
 
 Da un punto di vista di Somma Quadratica degli Errori (SQE), il modello migliore risulta essere senza ombra di dubbio `fit0000`, mentre la maggior parte degli altri si attesta intorno a 5500 o 6500.
 
-Infine, valutando AIC e BIC, i modelli migliori risultano essere `fit0001` e `fit0002`, il cui comportamento rispecchia quello di `fit001` e `fit002`, i quali presentano valori pressocché identici per AIC, e solo marginalmente diversi per BIC, con una prediligenza per i modelli con meno regressori. Questo è facilmente spiegabile dalla struttura estremamente simile tra i 4 modelli.
+Infine, valutando AIC e BIC, i modelli migliori risultano essere `fit0001` e `fit0002`, il cui comportamento rispecchia quello di `fit001` e `fit002`, i quali presentano valori pressoché identici per AIC, e solo marginalmente diversi per BIC, con una preferenza per i modelli con meno regressori. Questo è facilmente spiegabile dalla struttura estremamente simile tra i 4 modelli.
 
 In questa sezione abbiamo incluso anche i modelli `fit003` e `fit0003`, che introducono nuovamente il regressore x5_F al miglior modello precedente, per valutarne le performance: in generale migliorano marginalmente l'SQE e l'$R^2$ ma tale aggiunta condiziona significativamente gli indici dipendenti dal numero di regressori, ovvero F-statistic, adjusted $R^2$, AIC e BIC.
 
@@ -671,7 +666,7 @@ $$
 
 Questo modello rappresenta una soluzione intermedia: è più complesso del modello BIC/manuale, perché reinserisce `x4_CF`, aggiunge il termine quadratico di `x6_GSI` e l'interazione `x3_MP:x4_CF`; tuttavia è molto più compatto rispetto a `backward_aic`. Inoltre, nella tabella ha l'AIC più basso tra i modelli stepwise riportati, pari a 695.2.
 
-Nel complesso, la stepwise conferma che il modello BIC coincide con `fit0002` ed è quindi la scelta più performante. Il modello `both_aic`/`forward_aic` resta utile come confronto perché migliora l'adattamento ai dati, con rischio di overfitting.
+Nel complesso, la stepwise conferma che il modello BIC coincide con `fit0002`, rendendolo la scelta finale più coerente con il criterio BIC. Il modello `both_aic`/`forward_aic` resta utile come confronto perché migliora l'adattamento ai dati, con un rischio maggiore di overfitting.
 
 
 ## 2.5. Intervalli di Confidenza
@@ -697,7 +692,7 @@ Per il modello finale scelto (`FLAG = fit0002`) osserviamo che tutti gli interva
 ### 2.5.2. Modello stepwise backward AIC
 ![confidence_intervals_backward_aic](plottwists/confidence_intervals_backward_aic.png){width=60%}
 
-Nel caso di `backward_aic` si nota subito una maggiore instabilità. Alcuni coefficienti hanno intervalli molto ampi, e diversi intervalli attraversano lo zero (`x4_CF`, `x5_f`, tutti i quadrati tranne `x2_T^2` e tutti i prodotti tranne `x2_T:x5_F`). Questo significa che, pur avendo una SQE più bassa e un $R^2$ più alto, il modello contiene molti termini la cui stima è incerta.
+Nel caso di `backward_aic` si nota subito una maggiore instabilità. Alcuni coefficienti hanno intervalli molto ampi, e diversi intervalli attraversano lo zero (`x4_CF`, `x5_F`, tutti i quadrati inclusi tranne `x2_T^2` e tutti i prodotti tranne `x2_T:x5_F`). Questo significa che, pur avendo una SQE più bassa e un $R^2$ più alto, il modello contiene molti termini la cui stima è incerta.
 
 
 ### 2.5.3. Modello stepwise both AIC
@@ -712,12 +707,12 @@ In generale, gli intervalli di confidenza confermano quanto emerso dagli indici 
 # 3. Conclusioni
 L'analisi descrittiva iniziale ha mostrato che le variabili indipendenti sono verosimilmente standardizzate, con media prossima a zero e deviazione standard prossima a uno, tuttavia solo x5_F sembrerebbe essere normale per il test di Shapiro-Wilk. Dovremmo quindi tenere in considerazione per l'interpretazione finale che i coefficienti del modello non vanno letti come variazioni in unità fisiche originali, ma come effetti sulla scala trasformata del dataset.
 
-Tra i modelli considerati, abbiamo scelto `F` come modello finale perché rappresenta il compromesso più convincente tra capacità esplicativa e semplicità. Il modello raggiunge un $R^2 = 0.8666$ e un $\text{BIC} = 721.3$, mantenendo solo sei termini:
+Tra i modelli considerati, abbiamo scelto `FLAG` come modello finale perché rappresenta il compromesso più convincente tra capacità esplicativa e semplicità. Il modello raggiunge un $R^2 = 0.8666$ e un $\text{BIC} = 721.3$, mantenendo solo sei termini:
 $$
 Y = 141.16 - 9.88 \cdot \text{x1\_ISO} - 9.23 \cdot \text{x2\_T} + 5.96 \cdot \text{x3\_MP} - 8.20 \cdot \text{x6\_GSI} - 3.65 \cdot \text{x2\_T}^2 - 4.09 \cdot \text{x7\_UA}^2 + \varepsilon
 $$
 
-Dal punto di vista operativo, se l'obiettivo è massimizzare la qualità dell'immagine `y_IQ`, il modello suggerisce di lavorare verso valori bassi di `x1_ISO` (sensibilità del sensore) e `x6_GSI` (risoluzione al suolo in cm/px), valori alti di `x3_MP` (megapixel del sensore).
+Dal punto di vista operativo, se l'obiettivo è massimizzare la qualità dell'immagine `y_IQ`, il modello suggerisce di lavorare verso valori bassi di `x1_ISO` (sensibilità del sensore) e `x6_GSI` (risoluzione al suolo in cm/px), e verso valori alti di `x3_MP` (megapixel del sensore).
 
 Per quanto riguarda `x2_T` (tempo di esposizione), è presente sia come dipendenza lineare che quadratica. Mettendo le due in una sola funzione, risulta che è possibile massimizzare l'impatto positivo di `x2_T` tramite valori (standardizzati) intorno a -1.26.
 

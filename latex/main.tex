@@ -1,0 +1,68 @@
+\documentclass[12pt, varwidth=24cm, border=2cm]{standalone}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{textcomp}
+\usepackage{xcolor}
+
+\geometry{margin=2.5cm}
+\setcounter{secnumdepth}{0}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.65em}
+\emergencystretch=2em
+\graphicspath{{figures/}}
+
+\definecolor{codebg}{HTML}{F7F7F5}
+\definecolor{coderule}{HTML}{D8D8D8}
+\definecolor{linkblue}{HTML}{1C5D99}
+\definecolor{rblue}{HTML}{276DC3}
+
+\newcommand{\sectionlink}[1]{\underline{#1}}
+
+\lstdefinestyle{rconsole}{
+  basicstyle=\ttfamily\scriptsize,
+  backgroundcolor=\color{codebg},
+  breakatwhitespace=false,
+  breaklines=true,
+  columns=fullflexible,
+  frame=single,
+  framerule=0.3pt,
+  keepspaces=true,
+  rulecolor=\color{coderule},
+  showstringspaces=false,
+  upquote=true,
+  captionpos=b
+}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=black,
+  citecolor=black,
+  pdftitle={Sounds About Right},
+  pdfauthor={Vito Palmieri, Giovanni Orsini}
+}
+
+\title{\textbf{Sounds About \textcolor{rblue}{R}ight}\\\large Analisi statistica e regressione multipla}
+\author{Vito Palmieri (0612709326)\\Giovanni Orsini (0612709952)}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\input{content.tex}
+
+\end{document}

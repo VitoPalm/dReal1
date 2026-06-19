@@ -5,3 +5,4 @@
 .Rhistory
 .vscode/settings.json
 .gitignore
+.latex/tools

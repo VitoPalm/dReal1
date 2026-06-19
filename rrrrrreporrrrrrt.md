@@ -622,6 +622,7 @@ both_aic      4912    0.8807    0.8688     73.85    695.2    723.9
 ```
 
 Con il criterio BIC tutte e tre le direzioni portano allo stesso modello finale:
+
 $$
 \widehat{y}_{IQ}
 = \beta_0 + \beta_1 \text{x1\_ISO} + \beta_2 \text{x2\_T} + \beta_3 \text{x3\_MP}
@@ -634,6 +635,7 @@ Questo risultato è particolarmente interessante perché coincide con il modello
 Con il criterio AIC, invece, i risultati dipendono maggiormente dal punto di partenza. Questo è coerente con il fatto che AIC penalizza meno la complessità rispetto a BIC: modelli più grandi possono essere mantenuti più facilmente, e la procedura stepwise può fermarsi in soluzioni diverse.
 
 Partendo dal modello completo, `backward_aic` conserva il modello più ampio:
+
 $$
 \begin{aligned}
 \widehat{y}_{IQ}
@@ -655,6 +657,7 @@ $$
 Questo modello ha la SQE più bassa tra quelli ottenuti con la stepwise e il valore più alto di $R^2$, ma paga questa maggiore aderenza ai dati con una forte perdita di semplicità: il suo BIC arriva infatti a 748.5.
 
 Partendo dal modello nullo (`forward_aic`) e dal modello lineare intermedio (`both_aic`), invece, AIC porta allo stesso modello finale:
+
 $$
 \begin{aligned}
 \widehat{y}_{IQ}
@@ -687,30 +690,29 @@ I(x2_T^2)         -3.6453   -5.5382   -1.7525
 I(x7_UA^2)        -4.0947   -5.8445   -2.3449
 ```
 
-![confidence_intervals](plottwists/confidence_intervals.png)
+![confidence_intervals](plottwists/confidence_intervals.png){width=60%}
 
-Per il modello finale scelto (`FLAG = fit0002`) osserviamo che tutti gli intervalli dei regressori mantenuti sono lontani da zero. Questo rafforza la scelta effettuata nelle sezioni precedenti: i termini rimasti in `fit0002` non sono solo utili per migliorare gli indici globali del modello, ma risultano anche individualmente significativi.
+Per il modello finale scelto (`FLAG = fit0002`) osserviamo che tutti gli intervalli dei regressori mantenuti sono lontani da zero, il che rafforza la scelta di tale modello per rappresentare le relazioni tra le variabili.
 
-Dal grafico si nota inoltre che gli effetti lineari negativi di `x1_ISO`, `x2_T` e `x6_GSI` sono piuttosto netti. Il coefficiente di `x3_MP` è invece positivo, mentre i coefficienti quadratici di `x2_T` e `x7_UA` sono negativi: questo suggerisce una curvatura verso il basso, cioè un effetto che tende a penalizzare valori troppo lontani dal punto ottimale.
+### 2.5.2. Modello stepwise backward AIC
+![confidence_intervals_backward_aic](plottwists/confidence_intervals_backward_aic.png){width=60%}
 
-### 2.5.2. Modelli stepwise AIC
+Nel caso di `backward_aic` si nota subito una maggiore instabilità. Alcuni coefficienti hanno intervalli molto ampi, e diversi intervalli attraversano lo zero (`x4_CF`, `x5_f`, tutti i quadrati tranne `x2_T^2` e tutti i prodotti tranne `x2_T:x5_F`). Questo significa che, pur avendo una SQE più bassa e un $R^2$ più alto, il modello contiene molti termini la cui stima è incerta.
 
-Riportiamo anche gli intervalli di confidenza dei due modelli alternativi ottenuti tramite criterio AIC: il modello più ampio selezionato da `backward_aic` e il modello intermedio ottenuto con `both_aic`.
 
-![confidence_intervals_backward_aic](plottwists/confidence_intervals_backward_aic.png){width=70%}
+### 2.5.3. Modello stepwise both AIC
+![confidence_intervals_both_aic](plottwists/confidence_intervals_both_aic.png){width=60%}
 
-Nel caso di `backward_aic` si nota subito una maggiore instabilità. Alcuni coefficienti hanno intervalli molto ampi, e diversi intervalli attraversano lo zero. Questo significa che, pur avendo una SQE più bassa e un $R^2$ più alto, il modello contiene molti termini la cui stima è incerta. Il caso è particolarmente evidente per termini come `x5_F`, `I(x4_CF^2)` e `I(x7_UA^2)`, che allargano molto la scala del grafico.
+Il modello `both_aic` è notevolmente più leggibile e più compatto rispetto a `backward_aic`, ma presenta comunque intersezioni con lo zero (`x4_CF`, `x3_MP:x4_CF`). 
 
-![confidence_intervals_both_aic](plottwists/confidence_intervals_both_aic.png)
 
-Il modello `both_aic` è più leggibile e più compatto rispetto a `backward_aic`. La maggior parte dei suoi intervalli è ben separata dallo zero, ma non tutti: l'intervallo di `x4_CF` e quello dell'interazione `x3_MP:x4_CF` arrivano molto vicino allo zero o lo attraversano leggermente. Per questo motivo il modello resta interessante come confronto, ma è meno pulito del modello finale `fit0002`.
-
-Nel complesso, gli intervalli di confidenza confermano quanto emerso dagli indici di confronto: i modelli AIC riescono ad adattarsi meglio ai dati osservati, ma introducono termini meno stabili. Il modello `fit0002`, invece, mantiene solo coefficienti con intervalli chiaramente separati da zero, risultando più semplice e più robusto dal punto di vista interpretativo.
+## 2.6. Considerazioni finali
+In generale, gli intervalli di confidenza confermano quanto emerso dagli indici di confronto: i modelli AIC riescono ad adattarsi meglio ai dati osservati, tuttavia introducono termini meno stabili. Il modello `FLAG`, invece, mantiene solo coefficienti con intervalli chiaramente separati da zero, risultando più semplice e più robusto dal punto di vista predittivo.
 
 # 3. Conclusioni
 L'analisi descrittiva iniziale ha mostrato che le variabili indipendenti sono verosimilmente standardizzate, con media prossima a zero e deviazione standard prossima a uno, tuttavia solo x5_F sembrerebbe essere normale per il test di Shapiro-Wilk. Dovremmo quindi tenere in considerazione per l'interpretazione finale che i coefficienti del modello non vanno letti come variazioni in unità fisiche originali, ma come effetti sulla scala trasformata del dataset.
 
-Tra i modelli considerati, abbiamo scelto `fit0002` come modello finale perché rappresenta il compromesso più convincente tra capacità esplicativa e semplicità. Il modello raggiunge un $R^2 = 0.8666$ e un $\text{BIC} = 721.3$, mantenendo solo sei termini:
+Tra i modelli considerati, abbiamo scelto `F` come modello finale perché rappresenta il compromesso più convincente tra capacità esplicativa e semplicità. Il modello raggiunge un $R^2 = 0.8666$ e un $\text{BIC} = 721.3$, mantenendo solo sei termini:
 $$
 Y = 141.16 - 9.88 \cdot \text{x1\_ISO} - 9.23 \cdot \text{x2\_T} + 5.96 \cdot \text{x3\_MP} - 8.20 \cdot \text{x6\_GSI} - 3.65 \cdot \text{x2\_T}^2 - 4.09 \cdot \text{x7\_UA}^2 + \varepsilon
 $$

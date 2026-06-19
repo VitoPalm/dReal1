@@ -293,7 +293,7 @@ png(filename = "plottwists/diagnostics_FLAG.png", width = 10, height = 10, units
     plot(FLAG)
 dev.off()
 
-confint(FLAG)
+
 
 pole = residuals(FLAG)
 
@@ -388,6 +388,10 @@ print(stepwise_confronto)
 lapply(stepwise_fits, formula)
 
 # 2.5.
+confint(FLAG)
+confint(ffs_backward_aic)
+confint(ffs_aic)
+
 plot_confidence_intervals = function(fit, filename, title, width = 6, height = 4) {
     png(filename = filename, width = width, height = height, units = "in", res = 200, bg = "white")
         par(mfrow = c(1, 1))

@@ -6,3 +6,16 @@
 .vscode/settings.json
 .gitignore
 .latex/tools
+latex/main.aux
+latex/main.fdb_latexmk
+latex/main.fls
+latex/main.log
+latex/main.out
+latex/main.toc
+latex/report.aux
+latex/report.fdb_latexmk
+latex/report.fls
+latex/report.log
+latex/report.out
+latex/report.toc
+.gitignore

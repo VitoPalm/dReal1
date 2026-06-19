@@ -234,6 +234,8 @@ Usiamo come riferimento un livello di significatività $\alpha = 0.05$: un p-val
 
 Pr(>|t|) indica il p-value del test t, mentre il p-value del test F è riportato in fondo al summary del modello.
 
+### 2.1.1 
+
 Una prima ipotesi si può fare partendo da un modello che considera come regressori tutte le variabili indipendenti in maniera lineare.
 
 ```R console
@@ -498,28 +500,65 @@ Da questa analisi concludiamo che il modello `fit0002` ha il miglior tradeoff tr
 
 
 ## 2.3. Diagnostica  
+In questa sotto-sezione andiamo a verificare tramite strumenti diagnostici se le ipotesi alla base del nostro processo di regressione lineare siano state ragionevoli. Per questo analizziamo i residui:
+$$
+e_i = Y_i - \hat{Y}_i
+$$
+
+In un buon modello ci aspettiamo residui distribuiti casualmente attorno allo zero, con varianza circa costante e senza pattern evidenti rispetto ai valori stimati. Inoltre, per poter interpretare in modo affidabile test e intervalli di confidenza, è utile che i residui siano approssimabili a una distribuzione normale.
+
+Per un confronto tra i modelli candidati più interessanti riportiamo quindi i quattro grafici diagnostici prodotti da `plot(fitX)` separatamente, discutendo per ciascuno di essi cosa idealmente vorremmo vedere e cosa emerge dai nostri fit.
+
+### 2.3.1. Residuals vs Fitted
+
+Il primo grafico è **Residuals vs Fitted**, che confronta i residui con i valori stimati dal modello. Idealmente i punti dovrebbero disporsi in modo casuale attorno alla linea orizzontale in zero, senza curve o strutture evidenti.
 
 ![diagnostics_1](plottwists/diagnostics_1.png)
 
+Nel nostro caso `fit002` sembra il modello più aderente ai risultati desiderati per questo test. `fit0002` ha un comportamento comunque accettabile, anche se mostra un maggiore rumore.
+
+### 2.3.2. Q-Q plot
+
+Il secondo grafico è il **Q-Q plot dei residui**, che confronta i quantili dei residui standardizzati con quelli teorici della distribuzione normale. Se l'ipotesi di normalità è ragionevole, i punti dovrebbero seguire approssimativamente la retta rossa tracciata con `qqline()`. Come nei Q-Q plot della sezione 1.2, riportiamo anche il p-value del test di Shapiro-Wilk direttamente nel grafico.
+
 ![diagnostics_2](plottwists/diagnostics_2.png)
+
+Qui `fit0002` risulta tra i più convincenti: i punti seguono bene la retta, con scostamenti contenuti principalmente nelle code. Tuttavia, il test di Shapiro-Wilk sui suoi residui standardizzati mostra che, nonostante il risultato sia molto buono, `fit001` ha una probabilità leggermente superiore di ottenere un campione con una distribuzione meno aderente a quella normale.
+
+```R console
+# fit0002
+W = 0.9919, p-value = 0.8137
+# fit001
+W = 0.99247, p-value = 0.8541
+```
+
+Dato che il p-value è molto maggiore di $\alpha = 0.05$, non rifiutiamo l'ipotesi nulla di normalità dei residui.
+
+### 2.3.3. Scale-Location
+
+Il terzo grafico è **Scale-Location**, che mette in relazione i valori stimati con la radice dei residui standardizzati in valore assoluto. Questo grafico serve a valutare l'omoschedasticità: in un modello ideale, la dispersione dei residui dovrebbe rimanere circa costante al variare dei valori stimati.
 
 ![diagnostics_3](plottwists/diagnostics_3.png)
 
+Da questo punto di vista `fit1` e `fit01` appaiono leggermente più regolari, perché la linea rossa è più stabile. `fit0002` mostra invece una lieve crescita della dispersione per valori stimati più alti.
+
+### 2.3.4. Cook's Distance
+
+L'ultimo grafico è la **Cook's Distance**, che misura quanto ogni singola osservazione influenza la stima del modello. Una regola pratica è considerare con attenzione le osservazioni per cui:
+$$
+D_i > \frac{4}{n}
+$$
+
+Nel nostro caso, con $n = 100$, la soglia indicativa è $\frac{4}{n} = 0.04$.
+
 ![diagnostics_4](plottwists/diagnostics_4.png)
 
-In maniera occhiometrica, il più carino per ogni categoria diagnostica
-- Residuals vs Fitted -> fit002 (Runner up: fit0002)
-- Q-Q Plots: fit0002 (Runner up: fit0001)
-- Scale-Location: fit1 (Runner up: fit01)
-- Cook's Distance: fit001 (Runner up: fit1)
+Per la distanza di Cook i modelli più interessanti sono `fit001` e `fit1`.
 
 
+### 2.3.5. Multicollinearità
 
-
-![diagnostics_FLAG](plottwists/diagnostics_FLAG.png)
-
-
-È possibile effettuare un'ulteriore analisi diagnostica su quanto i regressori siano correlati tra loro, ovvero la multicollinearità del modello scelto (`vif(FLAG)`). 
+È possibile effettuare un'ulteriore analisi diagnostica su quanto i regressori siano correlati tra loro, ovvero la multicollinearità del modello (`vif(fitX)`). 
 
 Per calcolare il VIF di ciascun regressore lo isoliamo come variabile dipendente, e ne prevediamo poi il valore tramite regressione lineare semplice, in funzione di tutti gli altri; questo valore indica quindi quanto quel singolo regressore sia spiegato dalle rimanenti variabili.
 
@@ -531,9 +570,9 @@ $$
     x1_ISO       x2_T      x3_MP     x6_GSI  I(x2_T^2) I(x7_UA^2) 
   1.079947   1.079358   1.024063   1.051543   1.021741   1.066195 
 ```
-*Multicollinearità di FLAG*
+*Multicollinearità di fit0002*
 
-Come si può notare, il modello FLAG non mostra segni di collinearità tra più variabili.
+Come si può notare, il modello fit0002 non mostra segni di collinearità tra più variabili.
 Abbiamo trovato interessante mostrare un caso in cui i parametri del modello presentano un VIF non trascurabile. `vif(fit0000)` restituisce ad esempio:
 
 ```R console
@@ -547,20 +586,132 @@ Il valore del VIF di x5_F si allinea con i risultati dell'[analisi di correlazio
 
 
 ## 2.4. Regressione Stepwise
-BIC 
+Un approccio alternativo alla costruzione del modello è quello di utilizzare una procedura automatica di selezione dei regressori, come la regressione stepwise. Questa tecnica permette di aggiungere o rimuovere regressori in maniera iterativa.
 
+Nel nostro caso abbiamo usato uno scope massimo che contiene tutti i regressori lineari, tutte le interazioni a due variabili e i termini quadratici:
+$$
+y_{IQ} \sim (\text{x1\_ISO}+\text{x2\_T}+\text{x3\_MP}+\text{x4\_CF}+\text{x5\_F}+\text{x6\_GSI}+\text{x7\_UA})^2
++\sum_{j=1}^{7}x_j^2
+$$
 
-- lm (so fitting)
-- residuals
-- test di HP 
-    - globali
-    - individuali
-- Mettere poi in latex i modelli con i parametri trovati a numero
+Abbiamo provato le tre direzioni disponibili in `step()` usando sia il criterio AIC che BIC:
+
+- `backward`: parte dal modello completo e rimuove regressori;
+- `forward`: parte dal modello nullo e aggiunge regressori;
+- `both`: parte da un modello di mezzo, che contiene tutti i regressori lineari, e può sia aggiungere sia rimuovere regressori.
+
+Il BIC corrisponde a una penalizzazione $k = \log{n}$, quindi penalizza la complessità più severamente dell'AIC, che usa invece $k = 2$, con numerosità campionaria $n \ge 8$.
+
+```R console
+              SQE        R2       R2a     Fstat      AIC      BIC
+backward_bic  5495    0.8666    0.8580    100.69    700.4    721.3
+forward_bic   5495    0.8666    0.8580    100.69    700.4    721.3
+both_bic      5495    0.8666    0.8580    100.69    700.4    721.3
+backward_aic  4349    0.8944    0.8725     40.86    699.0    748.5
+forward_aic   4912    0.8807    0.8688     73.85    695.2    723.9
+both_aic      4912    0.8807    0.8688     73.85    695.2    723.9
+```
+
+Con il criterio BIC tutte e tre le direzioni portano allo stesso modello finale:
+$$
+\widehat{y}_{IQ}
+= \beta_0 + \beta_1 \text{x1\_ISO} + \beta_2 \text{x2\_T} + \beta_3 \text{x3\_MP}
++ \beta_4 \text{x6\_GSI}
++ \beta_5 \text{x2\_T}^2 + \beta_6 \text{x7\_UA}^2
+$$
+
+Questo risultato è particolarmente interessante perché coincide con il modello scelto manualmente (`FLAG = fit0002`). La procedura automatica conferma quindi che i regressori `x4_CF`, `x5_F` e `x7_UA` lineare non portano un miglioramento sufficiente una volta considerati gli altri termini.
+
+Con il criterio AIC, invece, i risultati dipendono maggiormente dal punto di partenza. Questo è coerente con il fatto che AIC penalizza meno la complessità rispetto a BIC: modelli più grandi possono essere mantenuti più facilmente, e la procedura stepwise può fermarsi in soluzioni diverse.
+
+Partendo dal modello completo, `backward_aic` conserva il modello più ampio:
+$$
+\begin{aligned}
+\widehat{y}_{IQ}
+=\;& \beta_0 + \beta_1 \text{x1\_ISO} + \beta_2 \text{x2\_T} + \beta_3 \text{x3\_MP}
++ \beta_4 \text{x4\_CF} + \beta_5 \text{x5\_F} + \beta_6 \text{x6\_GSI}
+\\
+&+ \beta_7 \text{x1\_ISO}^2 + \beta_8 \text{x2\_T}^2 + \beta_9 \text{x3\_MP}^2
++ \beta_{10} \text{x4\_CF}^2 + \beta_{11} \text{x6\_GSI}^2 + \beta_{12} \text{x7\_UA}^2
+\\
+&+ \beta_{13} \text{x1\_ISO}\cdot\text{x2\_T}
++ \beta_{14} \text{x1\_ISO}\cdot\text{x5\_F}
++ \beta_{15} \text{x2\_T}\cdot\text{x4\_CF}
+\\
+&+ \beta_{16} \text{x2\_T}\cdot\text{x5\_F}
++ \beta_{17} \text{x3\_MP}\cdot\text{x5\_F}
+\end{aligned}
+$$
+
+Questo modello ha la SQE più bassa tra quelli ottenuti con la stepwise e il valore più alto di $R^2$, ma paga questa maggiore aderenza ai dati con una forte perdita di semplicità: il suo BIC arriva infatti a 748.5.
+
+Partendo dal modello nullo (`forward_aic`) e dal modello lineare intermedio (`both_aic`), invece, AIC porta allo stesso modello finale:
+$$
+\begin{aligned}
+\widehat{y}_{IQ}
+=\;& \beta_0 + \beta_1 \text{x1\_ISO} + \beta_2 \text{x2\_T} + \beta_3 \text{x3\_MP}
++ \beta_4 \text{x4\_CF} + \beta_5 \text{x6\_GSI}
+\\
+&+ \beta_6 \text{x2\_T}^2 + \beta_7 \text{x6\_GSI}^2 + \beta_8 \text{x7\_UA}^2
++ \beta_9 \text{x3\_MP}\cdot\text{x4\_CF}
+\end{aligned}
+$$
+
+Questo modello rappresenta una soluzione intermedia: è più complesso del modello BIC/manuale, perché reinserisce `x4_CF`, aggiunge il termine quadratico di `x6_GSI` e l'interazione `x3_MP:x4_CF`; tuttavia è molto più compatto rispetto a `backward_aic`. Inoltre, nella tabella ha l'AIC più basso tra i modelli stepwise riportati, pari a 695.2.
+
+Nel complesso, la stepwise conferma che il modello BIC coincide con `fit0002` ed è quindi la scelta più performante. Il modello `both_aic`/`forward_aic` resta utile come confronto perché migliora l'adattamento ai dati, con rischio di overfitting.
 
 
 ## 2.5. Intervalli di Confidenza
-Determinazione degli intervalli di confidenza sui parametri trovati: al 95% ogni parametro è tra minimo e massimo dell'intervallo
+Per completare il confronto tra i modelli, consideriamo gli intervalli di confidenza al 95% dei coefficienti, calcolati tramite `confint()`. L'intervallo di confidenza fornisce un insieme di valori plausibili per il parametro reale: se l'intervallo non contiene lo zero, il relativo coefficiente è coerente con quanto osservato nei test t del `summary()`.
 
-# 7. Conclusioni Finali
-the journey matters more than the destination
-- discutere le variabili come se fossero cose vere
+### 2.5.1. Modello finale
+
+```R console
+                 Estimate     2.5 %    97.5 %
+(Intercept)      141.1581  138.0885  144.2276
+x1_ISO            -9.8775  -11.4468   -8.3083
+x2_T              -9.2344  -10.8914   -7.5773
+x3_MP              5.9568    4.3639    7.5497
+x6_GSI            -8.1953   -9.7878   -6.6029
+I(x2_T^2)         -3.6453   -5.5382   -1.7525
+I(x7_UA^2)        -4.0947   -5.8445   -2.3449
+```
+
+![confidence_intervals](plottwists/confidence_intervals.png)
+
+Per il modello finale scelto (`FLAG = fit0002`) osserviamo che tutti gli intervalli dei regressori mantenuti sono lontani da zero. Questo rafforza la scelta effettuata nelle sezioni precedenti: i termini rimasti in `fit0002` non sono solo utili per migliorare gli indici globali del modello, ma risultano anche individualmente significativi.
+
+Dal grafico si nota inoltre che gli effetti lineari negativi di `x1_ISO`, `x2_T` e `x6_GSI` sono piuttosto netti. Il coefficiente di `x3_MP` è invece positivo, mentre i coefficienti quadratici di `x2_T` e `x7_UA` sono negativi: questo suggerisce una curvatura verso il basso, cioè un effetto che tende a penalizzare valori troppo lontani dal punto ottimale.
+
+### 2.5.2. Modelli stepwise AIC
+
+Riportiamo anche gli intervalli di confidenza dei due modelli alternativi ottenuti tramite criterio AIC: il modello più ampio selezionato da `backward_aic` e il modello intermedio ottenuto con `both_aic`.
+
+![confidence_intervals_backward_aic](plottwists/confidence_intervals_backward_aic.png){width=70%}
+
+Nel caso di `backward_aic` si nota subito una maggiore instabilità. Alcuni coefficienti hanno intervalli molto ampi, e diversi intervalli attraversano lo zero. Questo significa che, pur avendo una SQE più bassa e un $R^2$ più alto, il modello contiene molti termini la cui stima è incerta. Il caso è particolarmente evidente per termini come `x5_F`, `I(x4_CF^2)` e `I(x7_UA^2)`, che allargano molto la scala del grafico.
+
+![confidence_intervals_both_aic](plottwists/confidence_intervals_both_aic.png)
+
+Il modello `both_aic` è più leggibile e più compatto rispetto a `backward_aic`. La maggior parte dei suoi intervalli è ben separata dallo zero, ma non tutti: l'intervallo di `x4_CF` e quello dell'interazione `x3_MP:x4_CF` arrivano molto vicino allo zero o lo attraversano leggermente. Per questo motivo il modello resta interessante come confronto, ma è meno pulito del modello finale `fit0002`.
+
+Nel complesso, gli intervalli di confidenza confermano quanto emerso dagli indici di confronto: i modelli AIC riescono ad adattarsi meglio ai dati osservati, ma introducono termini meno stabili. Il modello `fit0002`, invece, mantiene solo coefficienti con intervalli chiaramente separati da zero, risultando più semplice e più robusto dal punto di vista interpretativo.
+
+# 3. Conclusioni
+L'analisi descrittiva iniziale ha mostrato che le variabili indipendenti sono verosimilmente standardizzate, con media prossima a zero e deviazione standard prossima a uno, tuttavia solo x5_F sembrerebbe essere normale per il test di Shapiro-Wilk. Dovremmo quindi tenere in considerazione per l'interpretazione finale che i coefficienti del modello non vanno letti come variazioni in unità fisiche originali, ma come effetti sulla scala trasformata del dataset.
+
+Tra i modelli considerati, abbiamo scelto `fit0002` come modello finale perché rappresenta il compromesso più convincente tra capacità esplicativa e semplicità. Il modello raggiunge un $R^2 = 0.8666$ e un $\text{BIC} = 721.3$, mantenendo solo sei termini:
+$$
+Y = 141.16 - 9.88 \cdot \text{x1\_ISO} - 9.23 \cdot \text{x2\_T} + 5.96 \cdot \text{x3\_MP} - 8.20 \cdot \text{x6\_GSI} - 3.65 \cdot \text{x2\_T}^2 - 4.09 \cdot \text{x7\_UA}^2 + \varepsilon
+$$
+
+Dal punto di vista operativo, se l'obiettivo è massimizzare la qualità dell'immagine `y_IQ`, il modello suggerisce di lavorare verso valori bassi di `x1_ISO` (sensibilità del sensore) e `x6_GSI` (risoluzione al suolo in cm/px), valori alti di `x3_MP` (megapixel del sensore).
+
+Per quanto riguarda `x2_T` (tempo di esposizione), è presente sia come dipendenza lineare che quadratica. Mettendo le due in una sola funzione, risulta che è possibile massimizzare l'impatto positivo di `x2_T` tramite valori (standardizzati) intorno a -1.26.
+
+Per `x7_UA` (altitudine di volo dell'UAV), invece, non rimane un effetto lineare ma solo un effetto quadratico negativo; di conseguenza il modello suggerisce di mantenerlo vicino a zero (standardizzato), evitando valori estremi in entrambe le direzioni.
+
+Le variabili `x4_CF`, `x5_F` e il termine lineare di `x7_UA` non compaiono nel modello finale. Questo significa che, una volta considerate le altre variabili, non apportano un miglioramento sufficiente da giustificare la loro presenza nel modello selezionato.
+
+*That's all folks.*

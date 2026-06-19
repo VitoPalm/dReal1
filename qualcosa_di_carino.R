@@ -245,7 +245,27 @@ for (i in 1:4) {
         fit = cool_fits[[name]]
 
         if (i < 4) {
-            plot(fit, which = i, main = name)
+            if (i == 2) {
+                residui = residuals(fit)
+                shapiro_risultato = shapiro.test(residui)
+                p_val = round(shapiro_risultato$p.value, 4)
+
+                residui_standardizzati = rstandard(fit)
+                qqnorm(residui_standardizzati, main = name)
+                qqline(residui_standardizzati, col = "red")
+
+                mtext(
+                    text = paste("p-val:", p_val),
+                    side = 1,
+                    line = -1.2,
+                    adj = 0.95,
+                    col = ifelse(p_val < 0.05, "red", "darkgreen"),
+                    cex = 0.85,
+                    font = 2
+                )
+            } else {
+                plot(fit, which = i, main = name)
+            }
         } else {
             cook = cooks.distance(fit)
             threshold = 4 / nobs(fit)
@@ -262,6 +282,8 @@ for (i in 1:4) {
     dev.off()
 }
 
+shapiro.test(residuals(fit0002))    # gotta see if it's normal
+shapiro.test(residuals(fit001))     # gotta see if it's normal
 
 FLAG = fit0002 # Fits Like A Glove
 
@@ -274,7 +296,6 @@ dev.off()
 confint(FLAG)
 
 pole = residuals(FLAG)
-shapiro.test(pole) # gotta see if it's normal
 
 vif(FLAG) # variance inflation factor, multicollinearità
 vif(fit0000)
@@ -282,60 +303,151 @@ vif(fit0000)
 
 # 2.4.
 # a small step for a man crrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr, a giant leap for mankind crrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-reg = lm(y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA, data = twist)
-print(summary(reg))
+stepwise_formula_full = y_IQ ~ (x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA)^2 +
+    I(x1_ISO^2) + I(x2_T^2) + I(x3_MP^2) + I(x4_CF^2) +
+    I(x5_F^2) + I(x6_GSI^2) + I(x7_UA^2)
+stepwise_formula_mid = y_IQ ~ x1_ISO + x2_T + x3_MP + x4_CF + x5_F + x6_GSI + x7_UA
+stepwise_formula_null = y_IQ ~ 1
+stepwise_scope = list(lower = stepwise_formula_null, upper = stepwise_formula_full)
 
-fff = step(
-    lm(y_IQ ~ .^2 + I(x1_ISO^2) + I(x2_T^2) + I(x3_MP^2) + I(x4_CF^2) + I(x5_F^2) + I(x6_GSI^2) + I(x7_UA^2),
-        data = twist
-    ),
+stepwise_full = lm(stepwise_formula_full, data = twist)
+stepwise_mid = lm(stepwise_formula_mid, data = twist)
+stepwise_null = lm(stepwise_formula_null, data = twist)
+
+ffs_backward_bic = step(
+    stepwise_full,
+    scope = stepwise_scope,
+    direction = "backward",
+    trace = 1,
+    k = log(n)
+)
+summary(ffs_backward_bic)
+
+ffs_forward_bic = step(
+    stepwise_null,
+    scope = stepwise_scope,
+    direction = "forward",
+    trace = 1,
+    k = log(n)
+)
+summary(ffs_forward_bic)
+
+ffs = step(
+    stepwise_mid,
+    scope = stepwise_scope,
     direction = "both",
     trace = 1,
     k = log(n)
 )
-summary(fff)
+summary(ffs)
+
+ffs_backward_aic = step(
+    stepwise_full,
+    scope = stepwise_scope,
+    direction = "backward",
+    trace = 1,
+    k = 2
+)
+summary(ffs_backward_aic)
+
+ffs_forward_aic = step(
+    stepwise_null,
+    scope = stepwise_scope,
+    direction = "forward",
+    trace = 1,
+    k = 2
+)
+summary(ffs_forward_aic)
+
+ffs_aic = step(
+    stepwise_mid,
+    scope = stepwise_scope,
+    direction = "both",
+    trace = 1,
+    k = 2
+)
+summary(ffs_aic)
+
+stepwise_fits = list(
+    backward_bic = ffs_backward_bic,
+    forward_bic = ffs_forward_bic,
+    both_bic = ffs,
+    backward_aic = ffs_backward_aic,
+    forward_aic = ffs_forward_aic,
+    both_aic = ffs_aic
+)
+
+stepwise_confronto = data.frame(
+    SQE   = sapply(stepwise_fits, function(m) deviance(m)),
+    R2    = sapply(stepwise_fits, function(m) summary(m)$r.squared),
+    R2a   = sapply(stepwise_fits, function(m) summary(m)$adj.r.squared),
+    Fstat = sapply(stepwise_fits, function(m) summary(m)$fstatistic["value"]),
+    AIC   = sapply(stepwise_fits, function(m) AIC(m)),
+    BIC   = sapply(stepwise_fits, function(m) BIC(m))
+)
+print(stepwise_confronto)
+lapply(stepwise_fits, formula)
 
 # 2.5.
-png(filename = "plottwists/confidence_intervals.png", width = 10, height = 10, units = "in", res = 200, bg = "white")
-    par(mfrow = c(1, 1))
-    c0 = coef(FLAG)
-    cc = confint(FLAG)
+plot_confidence_intervals = function(fit, filename, title, width = 6, height = 4) {
+    png(filename = filename, width = width, height = height, units = "in", res = 200, bg = "white")
+        par(mfrow = c(1, 1))
+        c0 = coef(fit)
+        cc = confint(fit)
 
-    parametri = seq_along(c0)[-1]
-    etichette_parametri = names(c0)[parametri]
-    etichette_parametri = sub("^I\\((.*)\\)$", "\\1", etichette_parametri)
+        parametri = seq_along(c0)[-1]
+        etichette_parametri = names(c0)[parametri]
+        etichette_parametri = sub("^I\\((.*)\\)$", "\\1", etichette_parametri)
 
-    stima = c0[parametri]
-    limite_inf = cc[parametri, 1]
-    limite_sup = cc[parametri, 2]
-    y_pos = rev(seq_along(parametri))
+        stima = c0[parametri]
+        limite_inf = cc[parametri, 1]
+        limite_sup = cc[parametri, 2]
+        y_pos = rev(seq_along(parametri))
 
-    x_lim = range(c(0, limite_inf, limite_sup))
-    x_pad = diff(x_lim) * 0.05
-    if (x_pad == 0) x_pad = 1
-    x_lim = x_lim + c(-x_pad, x_pad)
+        x_lim = range(c(0, limite_inf, limite_sup))
+        x_pad = diff(x_lim) * 0.05
+        if (x_pad == 0) x_pad = 1
+        x_lim = x_lim + c(-x_pad, x_pad)
 
-    old_par = par(no.readonly = TRUE)
-    par(mar = c(5, 8, 4, 2) + 0.1)
+        old_par = par(no.readonly = TRUE)
+        par(mar = c(5, 8, 4, 2) + 0.1)
 
-    plot(
-        stima, y_pos,
-        xlim = x_lim,
-        ylim = c(0.5, length(parametri) + 0.5),
-        axes = FALSE,
-        xlab = "Estimated coefficient",
-        ylab = "",
-        pch = 19,
-        main = "Confidence Intervals for Parameter Estimates"
-    )
-    abline(v = 0, col = "gray60", lty = 2)
-    segments(limite_inf, y_pos, limite_sup, y_pos)
-    segments(limite_inf, y_pos - 0.08, limite_inf, y_pos + 0.08)
-    segments(limite_sup, y_pos - 0.08, limite_sup, y_pos + 0.08)
-    points(stima, y_pos, pch = 19)
-    axis(side = 1)
-    axis(side = 2, at = y_pos, labels = etichette_parametri, las = 1)
-    box(bty = "l")
+        plot(
+            stima, y_pos,
+            xlim = x_lim,
+            ylim = c(0.5, length(parametri) + 0.5),
+            axes = FALSE,
+            xlab = "Estimated coefficient",
+            ylab = "",
+            pch = 19,
+            main = title
+        )
+        abline(v = 0, col = "gray60", lty = 2)
+        segments(limite_inf, y_pos, limite_sup, y_pos)
+        segments(limite_inf, y_pos - 0.08, limite_inf, y_pos + 0.08)
+        segments(limite_sup, y_pos - 0.08, limite_sup, y_pos + 0.08)
+        points(stima, y_pos, pch = 19)
+        axis(side = 1)
+        axis(side = 2, at = y_pos, labels = etichette_parametri, las = 1)
+        box(bty = "l")
 
-    par(old_par)
-dev.off()
+        par(old_par)
+    dev.off()
+}
+
+plot_confidence_intervals(
+    FLAG,
+    "plottwists/confidence_intervals.png",
+    "Confidence Intervals for Parameter Estimates"
+)
+plot_confidence_intervals(
+    ffs_backward_aic,
+    "plottwists/confidence_intervals_backward_aic.png",
+    "Confidence Intervals - backward AIC",
+    height = 7
+)
+plot_confidence_intervals(
+    ffs_aic,
+    "plottwists/confidence_intervals_both_aic.png",
+    "Confidence Intervals - both AIC"
+)

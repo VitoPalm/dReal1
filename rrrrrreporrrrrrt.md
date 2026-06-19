@@ -190,25 +190,45 @@ In ogni caso, le correlazioni tra le variabili indipendenti menzionate sono bass
 
 
 # 2. Regressione
-Nella presente sezione utilizzeremo un'altra serie di strumenti per la ricerca di una superficie di risposta, ovvero un modello, che approssimi la realtà e ci permetta di stimare i legami tra la grandezza di interesse y_IQ, e le variabili indipendenti, che prendono il nome di regressori. 
+Nella presente sezione utilizzeremo un'altra serie di strumenti per la ricerca di una superficie di risposta, ovvero un modello che approssimi la realtà e ci permetta di stimare i legami tra la grandezza di interesse y_IQ, e le variabili indipendenti, che prendono il nome di regressori.
 
-
-Utilizziamo come indice di "bontà" del modello il coefficiente di determinazione $R^2$:
+Uno degli indici di "bontà" del modello è il coefficiente di determinazione $R^2$:
 $$
-0 \underset{\text{useless}}< R^2 = \frac{SQR}{SQTOT} \underset{\text{ideal}}< 1
+0 \underset{\text{useless}}{\le} R^2 = \frac{SQR}{SQTOT} \underset{\text{ideal}}{\le} 1
 $$
 
-Esso rappresenta rispetto alla variabilità totale quanto spiega la variabilità dovuta alla regressione.
-
-Partizione della variabilità totale in variabilità spiegata e variabilità residua:
+Esso misura la quota della variabilità totale ($SQTOT$) di y_IQ spiegata dal modello di regressione ($SQR$), dove:
 $$
 \overset{SQTOT}{\sum_{i=1}^{n} (Y_i - \bar{Y})^2} = \overset{SQR}{\sum_{i=1}^{n} (\hat{Y}_i - \bar{Y})^2} + \overset{SQE}{\sum_{i=1}^{n} (Y_i - \hat{Y}_i)^2}
 $$
 
-## 2.1. Analisi di Modelli Lineari
-Modelli lineari...
+In questa formula, detta *Teorema di decomposizione della devianza*, $Y$ rappresenta i valori osservati di y_IQ, $\hat{Y}$ rappresenta i valori stimati dal modello, e $\bar{Y}$ rappresenta la media dei valori osservati di y_IQ.
 
-Una prima ipotesi si può fare partendo da un modello che considera come possibili regressori tutte le variabili indipendenti in maniera lineare.
+## 2.1. Analisi di Modelli Lineari
+I modelli considerati in questa fase sono definiti da parametri lineari, cioè sono nella forma:
+$$
+Y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \varepsilon
+$$
+
+Nel nostro caso la stima viene effettuata tramite `lm()`, che applica il metodo dei minimi quadrati. I coefficienti vengono quindi scelti in modo da minimizzare la somma dei quadrati dei residui:
+$$
+SQE = \sum_{i=1}^{n}(Y_i - \hat{Y}_i)^2
+$$
+
+Per ogni modello osserviamo sia il test globale F, che verifica se il modello nel suo complesso spiega una quota significativa della variabilità di y_IQ, sia i test t sui singoli coefficienti.
+
+$$
+\begin{array}{rllllll}
+\text{Test globale } F && H_0: \beta_1 = \dots = \beta_p = 0 && H_A: \text{almeno un } \beta_j \neq 0 && F = \frac{MSQR}{MSQE} = \displaystyle{\frac{\frac{SQR}{p}}{\frac{SQE}{n-(p+1)}}} \\\\
+\text{Test } t \text{ sui coefficienti} && H_0: \beta_j = 0 && H_A: \beta_j \neq 0  && t_j =\displaystyle{\frac{\hat{\beta}_j}{\text{SE}(\hat{\beta}_j)}}
+\end{array}
+$$
+
+Usiamo come riferimento un livello di significatività $\alpha = 0.05$: un p-value inferiore a tale soglia suggerisce che il contributo del regressore sia statisticamente significativo, a parità degli altri regressori presenti nel modello.
+
+Pr(>|t|) indica il p-value del test t, mentre il p-value del test F è riportato in fondo al summary del modello.
+
+Una prima ipotesi si può fare partendo da un modello che considera come regressori tutte le variabili indipendenti in maniera lineare.
 
 ```R console
 Residuals:
@@ -234,12 +254,9 @@ F-statistic: 69.43 on 7 and 92 DF,  p-value: < 2.2e-16
 ```
 *fit0*
 
+Il modello `fit0` mostra già un ottimo p-value per il test globale F e coefficiente di determinazione $R^2$. Per il test t risultano poco significativi i regressori `x4_CF` e `x7_UA`, che andremo a rimuovere uno per volta nei due fit successivi, `fit1` e `fit2`, per valutare se la loro rimozione comporti un miglioramento del modello. Durante questa operazione notiamo una crescita dell'F-statistic, che suggerisce un miglioramento del modello, ma anche una crescita dell'errore standard residuo ed una lieve decrescita dell'R² dopo la seconda rimozione. 
 
-
-
-
-
-
+Una seconda ipotesi consiste nell'aggiungere tutte le interazioni a due a due tra i regressori (`.^2`). In questo modo il modello può descrivere situazioni in cui l'effetto di una variabile su y_IQ dipende dal valore assunto da un'altra variabile.
 
 ```R console
 Residuals:
@@ -286,8 +303,11 @@ F-statistic: 15.44 on 28 and 71 DF,  p-value: < 2.2e-16
 ```
 *fit00*
 
+Per `fit00` il valore dell'F-statistic è notevolmente inferiore rispetto ai modelli precedenti, mentre il coefficiente di determinazione $R^2$ cresce marginalmente ($+1.8\%$). Per il test t, quasi tutti i regressori sembrano non essere significativi, e vengono quindi rimossi, mantenendo x3_MP:x4_CF x5_F nonostante il loro p-value relativamente elevato.
 
+Tale rimozione porta x5_F ad assumere una maggiore importanza (p-value da 0.074 a 0.0015), e porta a una notevole crescita dell'F-statistic e ad una marginale riduzione del valore di $R^2$.
 
+Poiché nella fase descrittiva era stata notata una relazione curva legata a `x7_UA`, proviamo allora ad aggiungere al modello con interazioni anche il termine quadratico `I(x7_UA^2)`.
 
 ```R console
 Residuals:
@@ -335,14 +355,11 @@ F-statistic: 15.76 on 29 and 70 DF,  p-value: < 2.2e-16
 ```
 *fit000*
 
+Nel modello `fit000` il termine `I(x7_UA^2)` risulta significativo, con p-value pari a 0.041393. Questo conferma che l'effetto di `x7_UA` non viene rappresentato bene da un termine puramente lineare, mentre una componente quadratica cattura parte della relazione osservata graficamente.
 
+L'F-statistic assume un valore simile a quello di `fit00`, mentre $R^2$ cresce ancora una volta marginalmente ($+0.9\%$). Rimuovendo i termini trascurabili, e iterando il processo, otteniamo il modello `fit002` che presenta l'F-statistic più alto tra tutti i modelli considerati, e un $R^2$ comparabile con i precedenti modelli derivati. Notiamo anche che il termine quadratico `I(x7_UA^2)` risulta ancora più significativo, con un p-value che scende di tre ordini di grandezza.
 
-
-
-
-
-
-
+L'ultimo modello esteso riportato aggiunge anche il termine quadratico `I(x2_T^2)`, mantenendo `I(x7_UA^2)` e tutte le interazioni. Questa prova nasce dal fatto che `x2_T` è uno dei regressori più influenti già nel modello lineare e può quindi essere utile verificare se il suo effetto su y_IQ presenti anche una componente curva.
 
 ```R console
 Residuals:
@@ -390,6 +407,39 @@ Multiple R-squared:  0.8899,    Adjusted R-squared:  0.842
 F-statistic: 18.59 on 30 and 69 DF,  p-value: < 2.2e-16
 ```
 *fit0000*
+
+Il modello `fit0000` ottiene l'$R^2$ più alto tra quelli riportati con un valore di 0.8899. Per riguarda l'F-statistic, notiamo un lieve miglioramento rispetto a `fit000`. Sembrerebbe inoltre che il termine quadratico `I(x2_T^2)` sia molto significativo, mentre `I(x7_UA^2)` mantiene un livello simile a quello di `fit000`.
+
+Rimuovendo ancora una volta i termini trascurabili arriviamo al modello `fit0002`:
+
+$$
+Y = 141.16 - 9.88 \cdot \text{x1\_ISO} - 9.23 \cdot \text{x2\_T} + 5.96 \cdot \text{x3\_MP} - 8.20 \cdot \text{x6\_GSI} - 3.65 \cdot \text{x2\_T}^2 - 4.09 \cdot \text{x7\_UA}^2 + \varepsilon
+$$
+
+
+```R console
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-19.8304  -4.8654   0.9343   4.7614  20.2500
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept) 141.1581     1.5458  91.320  < 2e-16 ***
+x1_ISO       -9.8775     0.7902 -12.500  < 2e-16 ***
+x2_T         -9.2344     0.8345 -11.066  < 2e-16 ***
+x3_MP         5.9568     0.8021   7.426 5.26e-11 ***
+x6_GSI       -8.1953     0.8019 -10.220  < 2e-16 ***
+I(x2_T^2)    -3.6453     0.9532  -3.824 0.000237 ***
+I(x7_UA^2)   -4.0947     0.8811  -4.647 1.11e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.687 on 93 degrees of freedom
+Multiple R-squared:  0.8666,    Adjusted R-squared:  0.858
+F-statistic: 100.7 on 6 and 93 DF,  p-value: < 2.2e-16
+```
+
+Questo modello presenta una F-statistic molto vicina a quella di `fit002`, e uno dei più alti $R^2$ osservati finora.
 
 
 ## 2.2. Confronto modelli per indici

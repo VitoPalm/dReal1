@@ -444,15 +444,57 @@ Residual standard error: 7.687 on 93 degrees of freedom
 Multiple R-squared:  0.8666,    Adjusted R-squared:  0.858
 F-statistic: 100.7 on 6 and 93 DF,  p-value: < 2.2e-16
 ```
+*fit0002*
 
 Questo modello presenta una F-statistic molto vicina a quella di `fit002`, e uno dei più alti $R^2$ osservati finora.
 
 
 ## 2.2. Confronto modelli per indici
+Presentiamo ora un confronto tra tutti i modelli da noi considerati. Abbiamo scelto di confrontare i modelli in base a sei indici: SQE, $R^2$, adjusted $R^2$, F-statistic, AIC e BIC.
 
+L'adjusted $R^2$ è una versione modificata del coefficiente di determinazione $R^2$ che tiene conto del numero di regressori presenti nel modello. Esso penalizza l'aggiunta di regressori che non migliorano significativamente la capacità predittiva del modello, seguendo una logica simile a quella del MSQE Test: non basta ridurre l'errore residuo, bisogna anche valutare se il miglioramento giustifica la perdita di gradi di libertà.
 
-Direttamente sul fit che scegliamo
-Determinazione degli intervalli di confidenza sui parametri trovati: al 95% ogni parametro è tra minimo e massimo dell'intervallo
+Questo aspetto è collegato al bias-variance tradeoff: aggiungere regressori può ridurre il bias del modello, ma può anche aumentarne la varianza e portare a overfitting, cioè a un modello troppo adattato al campione osservato.
+
+AIC (Akaike Information Criterion) e BIC (Bayesian Information Criterion) sono due criteri di selezione del modello che bilanciano la bontà del fit con la complessità del modello. Entrambi i criteri penalizzano l'aggiunta di regressori. In generale, un modello con un AIC o BIC più basso è preferibile.
+
+$$
+\begin{array}{rcl}
+\text{AIC} & = & -2\log(L) + 2d
+\\
+\text{BIC} & = & -2\log(L) + \log(n)d
+\end{array}
+$$
+
+dove $L$ è verosimiglianza nel massimo, $d$ è il numero di parametri stimati e $n$ è il numero di osservazioni.
+
+```R console
+r$> print(confronto_modelli)
+             SQE        R2       R2a     Fstat      AIC      BIC
+fit0        6556    0.8408    0.8287     69.43    720.1    743.5
+fit1        6557    0.8408    0.8306     81.87    718.1    738.9
+fit2        6710    0.8371    0.8284     96.60    718.4    736.6
+fit00       5809    0.8590    0.8033     15.44    750.0    828.1
+fit01       6508    0.8420    0.8318     82.60    717.4    738.2
+fit000      5472    0.8672    0.8121     15.76    746.0    826.8
+fit001      6229    0.8488    0.8390     87.00    713.0    733.8
+fit002      6359    0.8456    0.8374    102.98    713.0    731.3
+fit003      6334    0.8462    0.8363     85.30    714.6    735.5
+fit0000     4535    0.8899    0.8420     18.59    729.2    812.6
+fit0001     5396    0.8690    0.8590     87.18    700.6    724.1
+fit0002     5495    0.8666    0.8580    100.69    700.4    721.3
+fit0003     5492    0.8667    0.8565     85.43    702.4    725.8
+```
+
+Per quanto riguarda l'$R^2$, il modello `fit0000` presenta il valore più alto, ma osservando l'adjusted $R^2$ possiamo vedere come l'elevato numero di regressori penalizzi il modello. Per l'adjusted $R^2$, il modello migliore risulta essere invece `fit0001`, ma `fit0002` possiede praticamente lo stesso valore.
+
+Da un punto di vista di Somma Quadratica degli Errori (SQE), il modello migliore risulta essere senza ombra di dubbio `fit0000`, mentre la maggior parte degli altri si attesta intorno a 5500 o 6500.
+
+Infine, valutando AIC e BIC, i modelli migliori risultano essere `fit0001` e `fit0002`, il cui comportamento rispecchia quello di `fit001` e `fit002`, i quali presentano valori pressocché identici per AIC, e solo marginalmente diversi per BIC, con una prediligenza per i modelli con meno regressori. Questo è facilmente spiegabile dalla struttura estremamente simile tra i 4 modelli.
+
+In questa sezione abbiamo incluso anche i modelli `fit003` e `fit0003`, che introducono nuovamente il regressore x5_F al miglior modello precedente, per valutarne le performance: in generale migliorano marginalmente l'SQE e l'$R^2$ ma tale aggiunta condiziona significativamente gli indici dipendenti dal numero di regressori, ovvero F-statistic, adjusted $R^2$, AIC e BIC.
+
+Da questa analisi concludiamo che il modello `fit0002` ha il miglior tradeoff tra bontà del modello e numero di regressori usati. Risulta essere sempre tra i migliori per tutti gli indici considerati, ed è il modello più performante in termini di AIC e BIC, che sono gli indici più importanti per la selezione del modello.
 
 
 ## 2.3. Diagnostica  
@@ -517,7 +559,7 @@ BIC
 
 
 ## 2.5. Intervalli di Confidenza
-
+Determinazione degli intervalli di confidenza sui parametri trovati: al 95% ogni parametro è tra minimo e massimo dell'intervallo
 
 # 7. Conclusioni Finali
 the journey matters more than the destination

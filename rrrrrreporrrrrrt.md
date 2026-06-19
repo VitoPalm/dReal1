@@ -124,19 +124,19 @@ H_0: \text{i dati provengono da} & \qquad\qquad H_A: \text{i dati non provengono
 \end{array}
 $$
 
-Il test si effettua valutando la statistica test:
+Il test si effettua valutando la statistica-test:
 $$
 0 \underset{H_A}{\le} W = \frac{\left(\sum_{i=1}^n a_i x_{(i)}\right)^2}{\sum_{i=1}^n (x_i - \bar{x})^2} \underset{H_0}{\le} 1
 $$
 
-Scegliendo un livello di confidenza 1-α = 0.95 il criterio di scelta è:
+Scegliendo un livello di confidenza 1-α = 0.95, il criterio di scelta è:
 $$
 p = \mathbb{P}(T_n = W < t_n = w_{\text{oss}} \mid H_0) \space \underset{H_A}{\overset{H_0}{\gtrless}} \space \alpha = 0.05
 $$
 
 ![qq_normals](plottwists/qq_normals.png)
 
-Notiamo che nel caso di y_IQ il p-value è 0.86, ovvero dando per scontato che la popolazione sia perfettamente normale, con l'86% di probabilità c'è la possibilità di ottenere un campione meno conforme alla distribuzione normale.
+Notiamo che nel caso di y_IQ il p-value è 0.86, ovvero ipotizzando che la popolazione sia perfettamente normale, la probabilità di ottenere un campione con una distribuzione meno aderente a quella normale è dell'86%.
 
 Dato che il livello di significatività è 0.05, non possiamo rifiutare l'ipotesi nulla, di conseguenza possiamo assumere che i dati provengano da una distribuzione normale.
 
@@ -234,7 +234,7 @@ Usiamo come riferimento un livello di significatività $\alpha = 0.05$: un p-val
 
 Pr(>|t|) indica il p-value del test t, mentre il p-value del test F è riportato in fondo al summary del modello.
 
-### 2.1.1 
+### 2.1.1. Classe 0: Modelli Lineari semplici
 
 Una prima ipotesi si può fare partendo da un modello che considera come regressori tutte le variabili indipendenti in maniera lineare.
 
@@ -263,6 +263,9 @@ F-statistic: 69.43 on 7 and 92 DF,  p-value: < 2.2e-16
 *fit0*
 
 Il modello `fit0` mostra già un ottimo p-value per il test globale F e coefficiente di determinazione $R^2$. Per il test t risultano poco significativi i regressori `x4_CF` e `x7_UA`, che andremo a rimuovere uno per volta nei due fit successivi, `fit1` e `fit2`, per valutare se la loro rimozione comporti un miglioramento del modello. Durante questa operazione notiamo una crescita dell'F-statistic, che suggerisce un miglioramento del modello, ma anche una crescita dell'errore standard residuo ed una lieve decrescita dell'R² dopo la seconda rimozione. 
+
+
+### 2.1.2. Classe 00: Modelli con interazioni a due a due
 
 Una seconda ipotesi consiste nell'aggiungere tutte le interazioni a due a due tra i regressori (`.^2`). In questo modo il modello può descrivere situazioni in cui l'effetto di una variabile su y_IQ dipende dal valore assunto da un'altra variabile.
 
@@ -315,6 +318,9 @@ Per `fit00` il valore dell'F-statistic è notevolmente inferiore rispetto ai mod
 
 Tale rimozione porta x5_F ad assumere una maggiore importanza (p-value da 0.074 a 0.0015), e porta a una notevole crescita dell'F-statistic e ad una marginale riduzione del valore di $R^2$.
 
+
+### 2.1.3. Classe 000: Modelli di classe 00 con aggiunta del termine quadratico I(x7_UA^2)
+
 Poiché nella fase descrittiva era stata notata una relazione curva legata a `x7_UA`, proviamo allora ad aggiungere al modello con interazioni anche il termine quadratico `I(x7_UA^2)`.
 
 ```R console
@@ -366,6 +372,9 @@ F-statistic: 15.76 on 29 and 70 DF,  p-value: < 2.2e-16
 Nel modello `fit000` il termine `I(x7_UA^2)` risulta significativo, con p-value pari a 0.041393. Questo conferma che l'effetto di `x7_UA` non viene rappresentato bene da un termine puramente lineare, mentre una componente quadratica cattura parte della relazione osservata graficamente.
 
 L'F-statistic assume un valore simile a quello di `fit00`, mentre $R^2$ cresce ancora una volta marginalmente ($+0.9\%$). Rimuovendo i termini trascurabili, e iterando il processo, otteniamo il modello `fit002` che presenta l'F-statistic più alto tra tutti i modelli considerati, e un $R^2$ comparabile con i precedenti modelli derivati. Notiamo anche che il termine quadratico `I(x7_UA^2)` risulta ancora più significativo, con un p-value che scende di tre ordini di grandezza.
+
+
+### 2.1.4. Classe 0000: Modelli di classe 000 con aggiunta del termine quadratico I(x2_T^2)
 
 L'ultimo modello esteso riportato aggiunge anche il termine quadratico `I(x2_T^2)`, mantenendo `I(x7_UA^2)` e tutte le interazioni. Questa prova nasce dal fatto che `x2_T` è uno dei regressori più influenti già nel modello lineare e può quindi essere utile verificare se il suo effetto su y_IQ presenti anche una componente curva.
 

@@ -85,7 +85,7 @@ for (nome in names(lista_variabili)) {
 
 dati_frequenze_variabili
 
-png(filename = "plottwists/hists.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
+png(filename = "plottwists/hists.png", width = 8, height = 12, units = "in", res = 200, bg = "white")
     par(mfrow = c(4, 2))
         for (nome in names(lista_variabili)) {
             dati = lista_variabili[[nome]]
@@ -95,7 +95,7 @@ png(filename = "plottwists/hists.png", width = 10, height = 14, units = "in", re
 dev.off()
 
 
-png(filename = "plottwists/qq_normals.png", width = 10, height = 14, units = "in", res = 200, bg = "white")
+png(filename = "plottwists/qq_normals.png", width = 8, height = 12, units = "in", res = 200, bg = "white")
     par(mfrow = c(4, 2))
         for (nome in names(lista_variabili)) {
             dati = lista_variabili[[nome]]
@@ -297,9 +297,8 @@ confint(FLAG)
 
 pole = residuals(FLAG)
 
-vif(FLAG) # variance inflation factor, multicollinearità
+vif(fit0002) # variance inflation factor, multicollinearità
 vif(fit0000)
-
 
 # 2.4.
 # a small step for a man crrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr, a giant leap for mankind crrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
